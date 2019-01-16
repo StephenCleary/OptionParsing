@@ -8,9 +8,9 @@ namespace Nito.OptionParsing
     /// <summary>
     /// Provides the default lexer for command lines, based on Raymond Chen's analysis here: http://blogs.msdn.com/b/oldnewthing/archive/2010/09/17/10063629.aspx
     /// </summary>
-    public sealed class DefaultCommandLineLexer: ICommandLineLexer
+    public sealed class QuoteBasedCommandLineLexer: ICommandLineLexer
     {
-        public static DefaultCommandLineLexer Instance { get; } = new DefaultCommandLineLexer();
+        public static QuoteBasedCommandLineLexer Instance { get; } = new QuoteBasedCommandLineLexer();
 
         private enum LexerState
         {

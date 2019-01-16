@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Nito.OptionParsing.UnitTests
 {
-    public class DefaultCommandLineLexerUnitTests
+    public class QuoteBasedCommandLineLexerUnitTests
     {
         [Theory]
         [InlineData(new string[0], "")]
@@ -16,10 +16,10 @@ namespace Nito.OptionParsing.UnitTests
         [InlineData(new[] { "foo\"\"\"\"\"\"bar" }, "\"foo\"\"\"\"\"\"\"\"\"\"\"\"bar\"")]
         public void RoundTrip(string[] expected, string input)
         {
-            var lexed = DefaultCommandLineLexer.Instance.Lex(input).ToList();
+            var lexed = QuoteBasedCommandLineLexer.Instance.Lex(input).ToList();
             Assert.Equal(expected, lexed);
 
-            var combined = DefaultCommandLineLexer.Instance.Escape(lexed);
+            var combined = QuoteBasedCommandLineLexer.Instance.Escape(lexed);
             Assert.Equal(input, combined);
         }
 
@@ -30,20 +30,20 @@ namespace Nito.OptionParsing.UnitTests
         [InlineData(new[] { "" }, "\"")] // just a quote!
         public void Lex_NoRoundTrip(string[] expected, string input)
         {
-            var lexed = DefaultCommandLineLexer.Instance.Lex(input).ToList();
+            var lexed = QuoteBasedCommandLineLexer.Instance.Lex(input).ToList();
             Assert.Equal(expected, lexed);
         }
 
         [Fact]
         public void Lex_Null_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => DefaultCommandLineLexer.Instance.Lex(null).ToList());
+            Assert.Throws<ArgumentNullException>(() => QuoteBasedCommandLineLexer.Instance.Lex(null).ToList());
         }
 
         [Fact]
         public void Escape_Null_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => DefaultCommandLineLexer.Instance.Escape(null));
+            Assert.Throws<ArgumentNullException>(() => QuoteBasedCommandLineLexer.Instance.Escape(null));
         }
     }
 }
