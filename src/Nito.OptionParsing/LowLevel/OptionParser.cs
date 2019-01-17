@@ -190,7 +190,7 @@ namespace Nito.OptionParsing.LowLevel
                                 throw new UnknownOptionException($"Unknown option {option} in parameter {value}");
 
                             if (_lastOption.Argument == OptionArgument.Required)
-                                throw new OptionArgumentException($"Option {option} cannot be in a short option run (because it takes an argument) in parameter {value}");
+                                throw new InvalidParameterException($"Option {option} cannot be in a short option run (because it takes an argument) in parameter {value}");
 
                             yield return new ParsedOption { Definition = _lastOption };
                             _lastOption = null;

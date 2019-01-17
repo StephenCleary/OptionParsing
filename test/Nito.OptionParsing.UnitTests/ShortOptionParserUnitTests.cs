@@ -79,6 +79,20 @@ namespace Nito.OptionParsing.UnitTests
         }
 
         [Fact]
+        public void OptionWithOptionalArgument_EmptyArgument_WithEquals_IncludedInOutput()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'x', Argument = OptionArgument.Optional },
+            };
+            var result = ParseOptions(options, "-x=");
+            Assert.Equal(new[]
+            {
+                new ParsedOption { Definition = options[0], Argument = "" },
+            }, result, ParsedOptionComparer);
+        }
+
+        [Fact]
         public void OptionWithOptionalArgument_ArgumentNotPassed_EndOfInput_IncludedInOutput()
         {
             var options = new[]
@@ -165,6 +179,83 @@ namespace Nito.OptionParsing.UnitTests
         }
 
         [Fact]
+        public void OptionWithRequiredArgument_WithSpace_ArgumentStartsWithDash_IncludedInOutput()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'x', Argument = OptionArgument.Required },
+            };
+            var result = ParseOptions(options, "-x", "-3");
+            Assert.Equal(new[]
+            {
+                new ParsedOption { Definition = options[0], Argument = "-3" },
+            }, result, ParsedOptionComparer);
+        }
+
+        [Fact]
+        public void OptionWithRequiredArgument_WithSpace_ArgumentStartsWithSlash_IncludedInOutput()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'x', Argument = OptionArgument.Required },
+            };
+            var result = ParseOptions(options, "-x", "/src");
+            Assert.Equal(new[]
+            {
+                new ParsedOption { Definition = options[0], Argument = "/src" },
+            }, result, ParsedOptionComparer);
+        }
+
+        [Fact]
+        public void ShortOptionRun_IncludedInOutput()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'a' },
+                new OptionDefinition { ShortName = 'b' },
+            };
+            var result = ParseOptions(options, "-ab");
+            Assert.Equal(new[]
+            {
+                new ParsedOption { Definition = options[0] },
+                new ParsedOption { Definition = options[1] },
+            }, result, ParsedOptionComparer);
+        }
+
+        [Fact]
+        public void ShortOptionRun_AllowsOptionalArgumentOptions()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'a', Argument = OptionArgument.Optional },
+                new OptionDefinition { ShortName = 'b', Argument = OptionArgument.Optional },
+            };
+            var result = ParseOptions(options, "-ab");
+            Assert.Equal(new[]
+            {
+                new ParsedOption { Definition = options[0] },
+                new ParsedOption { Definition = options[1] },
+            }, result, ParsedOptionComparer);
+        }
+
+        [Fact]
+        public void ShortOptionRun_OptionalArgument_WithSpace_ArgumentTreatedAsPositional()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'a' },
+                new OptionDefinition { ShortName = 'b', Argument = OptionArgument.Optional },
+            };
+            var result = ParseOptions(options, "-ab", "bob");
+            Assert.Equal(new[]
+            {
+                new ParsedOption { Definition = options[0] },
+                new ParsedOption { Definition = options[1] },
+                new ParsedOption { Argument = "bob" },
+            }, result, ParsedOptionComparer);
+        }
+
+        [Fact]
         public void UnknownOption_Throws()
         {
             Assert.Throws<UnknownOptionException>(() => ParseOptions(null, "-x"));
@@ -204,6 +295,39 @@ namespace Nito.OptionParsing.UnitTests
         public void SingleDash_Throws()
         {
             Assert.Throws<InvalidParameterException>(() => ParseOptions(null, "-"));
+        }
+
+        [Fact]
+        public void ShortOptionRun_UnknownOption_Throws()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'a' },
+                new OptionDefinition { ShortName = 'b' },
+            };
+            Assert.Throws<UnknownOptionException>(() => ParseOptions(options, "-az"));
+        }
+
+        [Fact]
+        public void ShortOptionRun_MayNotTakeArguments()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'a' },
+                new OptionDefinition { ShortName = 'b', Argument = OptionArgument.Optional },
+            };
+            Assert.Throws<InvalidParameterException>(() => ParseOptions(options, "-ab:bob"));
+        }
+
+        [Fact]
+        public void ShortOptionRun_WithRequiredArgument_Throws()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'a' },
+                new OptionDefinition { ShortName = 'b', Argument = OptionArgument.Required },
+            };
+            Assert.Throws<InvalidParameterException>(() => ParseOptions(options, "-ab", "bob"));
         }
 
         private static List<ParsedOption> ParseOptions(IReadOnlyCollection<OptionDefinition> definitions, params string[] commandLine)
