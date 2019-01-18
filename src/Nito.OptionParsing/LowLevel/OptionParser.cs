@@ -94,9 +94,9 @@ namespace Nito.OptionParsing.LowLevel
                         yield return new ParsedOption { Definition = _lastOption };
                     }
 
-                    string option = null;
+                    string option;
                     string argument = null;
-                    int argumentIndex = value.IndexOfAny(ArgumentDelimiters, 2);
+                    var argumentIndex = value.IndexOfAny(ArgumentDelimiters, 2);
                     if (argumentIndex == -1)
                     {
                         // No argument delimiters were found; the command line element is an option.
@@ -149,13 +149,13 @@ namespace Nito.OptionParsing.LowLevel
                     if (value.Length < 2)
                         throw new InvalidParameterException($"Invalid parameter {value}");
 
-                    string option = value[1].ToString();
+                    var option = value[1].ToString();
                     _lastOption = _definitions.FirstOrDefault(x => _stringComparer.Equals(x.ShortNameAsString, option));
                     if (_lastOption == null)
                         throw new UnknownOptionException($"Unknown option {option} in parameter {value}");
 
                     // The first short option may either have an argument or start a short option run
-                    int argumentIndex = value.IndexOfAny(ArgumentDelimiters, 2);
+                    var argumentIndex = value.IndexOfAny(ArgumentDelimiters, 2);
                     if (argumentIndex == 2)
                     {
                         // The first short option has an argument.
@@ -182,7 +182,7 @@ namespace Nito.OptionParsing.LowLevel
                     else
                     {
                         // This is a short option run; they must not take arguments.
-                        for (int i = 1; i != value.Length; ++i)
+                        for (var i = 1; i != value.Length; ++i)
                         {
                             option = value[i].ToString();
                             _lastOption = _definitions.FirstOrDefault(x => _stringComparer.Equals(x.ShortNameAsString, option));
@@ -213,9 +213,9 @@ namespace Nito.OptionParsing.LowLevel
                     if (value.Length < 2)
                         throw new InvalidParameterException($"Invalid parameter {value}");
 
-                    string option = null;
+                    string option;
                     string argument = null;
-                    int argumentIndex = value.IndexOfAny(ArgumentDelimiters, 2);
+                    var argumentIndex = value.IndexOfAny(ArgumentDelimiters, 2);
                     if (argumentIndex == -1)
                     {
                         option = value.Substring(1);
