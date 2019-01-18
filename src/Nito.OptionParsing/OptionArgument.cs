@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nito.OptionParsing.LowLevel
+namespace Nito.OptionParsing
 {
     /// <summary>
     /// Whether an option may take an argument.
