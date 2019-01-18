@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Nito.OptionParsing
+namespace Nito.OptionParsing.Lexing
 {
     /// <summary>
     /// Provides the default lexer for command lines, based on Raymond Chen's analysis here: http://blogs.msdn.com/b/oldnewthing/archive/2010/09/17/10063629.aspx

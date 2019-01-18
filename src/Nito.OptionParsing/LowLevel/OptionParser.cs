@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nito.OptionParsing.Lexing;
 
 namespace Nito.OptionParsing.LowLevel
 {

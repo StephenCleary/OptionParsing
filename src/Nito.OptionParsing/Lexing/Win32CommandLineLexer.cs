@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace Nito.OptionParsing
+namespace Nito.OptionParsing.Lexing
 {
     /// <summary>
     /// Provides the default Win32 Console command-line lexing. Use this type if you need backwards-compatibility for your command-line parsing.

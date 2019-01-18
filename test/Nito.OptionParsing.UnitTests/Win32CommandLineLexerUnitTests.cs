@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Nito.OptionParsing.Lexing;
 using Xunit;
 
 namespace Nito.OptionParsing.UnitTests

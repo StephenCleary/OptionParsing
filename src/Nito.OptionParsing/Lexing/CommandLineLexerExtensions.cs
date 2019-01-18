@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Nito.OptionParsing
+namespace Nito.OptionParsing.Lexing
 {
     /// <summary>
     /// Extension methods for command-line lexers.

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Nito.OptionParsing
+namespace Nito.OptionParsing.Lexing
 {
     /// <summary>
     /// A system for parsing (and quoting/escaping) command-line arguments.
