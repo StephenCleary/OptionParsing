@@ -1,25 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nito.Comparers;
 using Nito.OptionParsing.LowLevel;
 using Xunit;
+using static Nito.OptionParsing.UnitTests.Utility.OptionParsing;
 
 namespace Nito.OptionParsing.UnitTests
 {
     public class OptionParserUnitTests_ShortOptions
     {
-        [Fact]
-        public void Option_NotPassed_NotIncludedInOutput()
-        {
-            var options = new[]
-            {
-                new OptionDefinition { ShortName = 'a' },
-            };
-            var result = ParseOptions(options, "and");
-            Assert.DoesNotContain(new ParsedOption { Definition = options[0] }, result, CompareDefinitionsOnly);
-        }
-
         [Fact]
         public void FlagOption_Passed_IncludedInOutput()
         {
@@ -284,6 +273,31 @@ namespace Nito.OptionParsing.UnitTests
         }
 
         [Fact]
+        public void OptionNamedDash_CannotBeUsedWithDash()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = '-' },
+            };
+            var result = ParseOptions(options, "--");
+            Assert.DoesNotContain(new ParsedOption { Definition = options[0] }, result, CompareDefinitionsOnly);
+        }
+
+        [Fact]
+        public void OptionNamedDash_MayBeUsedWithSlash()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = '-' },
+            };
+            var result = ParseOptions(options, "/-");
+            Assert.Equal(new[]
+            {
+                new ParsedOption { Definition = options[0] },
+            }, result, ParsedOptionComparer);
+        }
+
+        [Fact]
         public void UnknownOption_Throws()
         {
             Assert.Throws<UnknownOptionException>(() => ParseOptions(null, "-x"));
@@ -330,12 +344,6 @@ namespace Nito.OptionParsing.UnitTests
         }
 
         [Fact]
-        public void SingleDash_Throws()
-        {
-            Assert.Throws<InvalidParameterException>(() => ParseOptions(null, "-"));
-        }
-
-        [Fact]
         public void ShortOptionRun_UnknownOption_Throws()
         {
             var options = new[]
@@ -367,21 +375,5 @@ namespace Nito.OptionParsing.UnitTests
             };
             Assert.Throws<InvalidParameterException>(() => ParseOptions(options, "-ab", "bob"));
         }
-
-        private static List<ParsedOption> ParseOptions(IReadOnlyCollection<OptionDefinition> definitions, params string[] commandLine)
-        {
-            return new OptionParser(StringComparer.InvariantCulture, definitions ?? new OptionDefinition[0], commandLine).ToList();
-        }
-
-        private static List<ParsedOption> ParseOptionsIgnoringCase(IReadOnlyCollection<OptionDefinition> definitions, params string[] commandLine)
-        {
-            return new OptionParser(StringComparer.InvariantCultureIgnoreCase, definitions ?? new OptionDefinition[0], commandLine).ToList();
-        }
-
-        private static readonly IEqualityComparer<ParsedOption> ParsedOptionComparer = EqualityComparerBuilder.For<ParsedOption>()
-            .EquateBy(x => x.Definition).ThenEquateBy(x => x.Argument);
-
-        private static readonly IEqualityComparer<ParsedOption> CompareDefinitionsOnly = EqualityComparerBuilder.For<ParsedOption>()
-            .EquateBy(x => x.Definition);
     }
 }
