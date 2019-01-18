@@ -3,7 +3,7 @@
     /// <summary>
     /// An arguments class, which uses option attributes on its properties.
     /// </summary>
-    public interface IOptionArguments
+    public interface ICommandLineOptions
     {
         /// <summary>
         /// Validates the arguments by throwing <see cref="OptionParsingException"/> errors as necessary.
