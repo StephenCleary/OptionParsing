@@ -125,6 +125,18 @@ namespace Nito.OptionParsing.UnitTests
         }
 
         [Fact]
+        public void Options_WithSameShortName_CaseInsensitive_Throws()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'x' },
+                new OptionDefinition { ShortName = 'X' },
+            };
+            ParseOptions(options);
+            Assert.Throws<InvalidOperationException>(() => ParseOptionsIgnoringCase(options));
+        }
+
+        [Fact]
         public void Options_WithSameLongName_Throws()
         {
             var options = new[]
@@ -133,6 +145,18 @@ namespace Nito.OptionParsing.UnitTests
                 new OptionDefinition { LongName = "and" },
             };
             Assert.Throws<InvalidOperationException>(() => ParseOptions(options));
+        }
+
+        [Fact]
+        public void Options_WithSameLongName_CaseInsensitive_Throws()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { LongName = "and" },
+                new OptionDefinition { LongName = "And" },
+            };
+            ParseOptions(options);
+            Assert.Throws<InvalidOperationException>(() => ParseOptionsIgnoringCase(options));
         }
     }
 }

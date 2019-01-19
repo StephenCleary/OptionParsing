@@ -52,12 +52,12 @@ namespace Nito.OptionParsing.LowLevel
             // Ensure that the option definitions are valid and names are unique.
             foreach (var definition in _definitions)
                 definition.Validate();
-            EnsureUnique("short name", _definitions.Where(x => x.ShortName != null).Select(x => x.ShortName.Value));
+            EnsureUnique("short name", _definitions.Where(x => x.ShortName != null).Select(x => x.ShortNameAsString));
             EnsureUnique("long name", _definitions.Where(x => x.LongName != null).Select(x => x.LongName));
 
-            void EnsureUnique<T>(string fieldName, IEnumerable<T> items)
+            void EnsureUnique(string fieldName, IEnumerable<string> items)
             {
-                var values = new HashSet<T>();
+                var values = new HashSet<string>(_stringComparer);
                 foreach (var item in items)
                 {
                     if (!values.Add(item))
