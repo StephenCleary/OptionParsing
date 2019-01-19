@@ -23,10 +23,30 @@ namespace Nito.OptionParsing.UnitTests
         [Fact]
         public void PositionalArguments()
         {
-            var result = ParseOptions(null, "bob");
+            var result = ParseOptions(null, "bob", "/o", "/usr/bin/", "/this:that", "/x=y");
             Assert.Equal(new[]
             {
                 new ParsedOption { Argument = "bob" },
+                new ParsedOption { Argument = "/o" },
+                new ParsedOption { Argument = "/usr/bin/" },
+                new ParsedOption { Argument = "/this:that" },
+                new ParsedOption { Argument = "/x=y" },
+            }, result, ParsedOptionComparer);
+        }
+
+        [Fact]
+        public void Options_AfterPositionalArguments_TreatedAsPositionalArguments()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'a', LongName = "and" },
+            };
+            var result = ParseOptions(options, "0", "-a", "1");
+            Assert.Equal(new[]
+            {
+                new ParsedOption { Argument = "0" },
+                new ParsedOption { Argument = "-a" },
+                new ParsedOption { Argument = "1" },
             }, result, ParsedOptionComparer);
         }
 
@@ -60,7 +80,7 @@ namespace Nito.OptionParsing.UnitTests
         [Fact]
         public void SingleSlash_Throws()
         {
-            Assert.Throws<InvalidParameterException>(() => ParseOptions(null, "/"));
+            Assert.Throws<InvalidParameterException>(() => ParseSlashOptions(null, "/"));
         }
 
         [Fact]

@@ -16,7 +16,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option" },
             };
-            var result = ParseOptions(options, "/o");
+            var result = ParseSlashOptions(options, "/o");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0] },
@@ -30,7 +30,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option" },
             };
-            var result = ParseOptionsIgnoringCase(options, "/O");
+            var result = ParseSlashOptionsIgnoringCase(options, "/O");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0] },
@@ -44,7 +44,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option", Argument = OptionArgument.Optional },
             };
-            var result = ParseOptions(options, "/o", "arg");
+            var result = ParseSlashOptions(options, "/o", "arg");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0], Argument = "arg" },
@@ -58,7 +58,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option", Argument = OptionArgument.Optional },
             };
-            var result = ParseOptions(options, "/o:arg");
+            var result = ParseSlashOptions(options, "/o:arg");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0], Argument = "arg" },
@@ -72,7 +72,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option", Argument = OptionArgument.Optional },
             };
-            var result = ParseOptions(options, "/o=arg");
+            var result = ParseSlashOptions(options, "/o=arg");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0], Argument = "arg" },
@@ -86,7 +86,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option", Argument = OptionArgument.Optional },
             };
-            var result = ParseOptions(options, "/o=");
+            var result = ParseSlashOptions(options, "/o=");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0], Argument = "" },
@@ -100,7 +100,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option", Argument = OptionArgument.Optional },
             };
-            var result = ParseOptions(options, "/o");
+            var result = ParseSlashOptions(options, "/o");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0] },
@@ -115,7 +115,7 @@ namespace Nito.OptionParsing.UnitTests
                 new OptionDefinition { ShortName = 'f', LongName = "first", Argument = OptionArgument.Optional },
                 new OptionDefinition { ShortName = 's', LongName = "second" },
             };
-            var result = ParseOptions(options, "/f", "/s");
+            var result = ParseSlashOptions(options, "/f", "/s");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0] },
@@ -130,7 +130,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option", Argument = OptionArgument.Optional },
             };
-            var result = ParseOptions(options, "/o", "--");
+            var result = ParseSlashOptions(options, "/o", "--");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0] },
@@ -144,7 +144,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option", Argument = OptionArgument.Required },
             };
-            var result = ParseOptions(options, "/o:bob");
+            var result = ParseSlashOptions(options, "/o:bob");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0], Argument = "bob" },
@@ -158,7 +158,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option", Argument = OptionArgument.Required },
             };
-            var result = ParseOptions(options, "/o=bob");
+            var result = ParseSlashOptions(options, "/o=bob");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0], Argument = "bob" },
@@ -172,7 +172,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option", Argument = OptionArgument.Required },
             };
-            var result = ParseOptions(options, "/o", "-3");
+            var result = ParseSlashOptions(options, "/o", "-3");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0], Argument = "-3" },
@@ -186,7 +186,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option", Argument = OptionArgument.Required },
             };
-            var result = ParseOptions(options, "/o", "/src");
+            var result = ParseSlashOptions(options, "/o", "/src");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0], Argument = "/src" },
@@ -200,7 +200,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = '/' },
             };
-            var result = ParseOptions(options, "-/");
+            var result = ParseSlashOptions(options, "-/");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0] },
@@ -214,7 +214,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = '/' },
             };
-            var result = ParseOptions(options, "//");
+            var result = ParseSlashOptions(options, "//");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0] },
@@ -224,7 +224,7 @@ namespace Nito.OptionParsing.UnitTests
         [Fact]
         public void UnknownOption_Throws()
         {
-            Assert.Throws<UnknownOptionException>(() => ParseOptions(null, "/o"));
+            Assert.Throws<UnknownOptionException>(() => ParseSlashOptions(null, "/o"));
         }
 
         [Fact]
@@ -234,7 +234,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option" },
             };
-            Assert.Throws<UnknownOptionException>(() => ParseOptions(options, "/O"));
+            Assert.Throws<UnknownOptionException>(() => ParseSlashOptions(options, "/O"));
         }
 
         [Fact]
@@ -244,7 +244,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option", Argument = OptionArgument.Required },
             };
-            Assert.Throws<OptionArgumentException>(() => ParseOptions(options, "/o"));
+            Assert.Throws<OptionArgumentException>(() => ParseSlashOptions(options, "/o"));
         }
 
         [Fact]
@@ -254,7 +254,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option" },
             };
-            Assert.Throws<OptionArgumentException>(() => ParseOptions(options, "/o:bob"));
+            Assert.Throws<OptionArgumentException>(() => ParseSlashOptions(options, "/o:bob"));
         }
 
         [Fact]
@@ -264,7 +264,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = 'o', LongName = "option" },
             };
-            Assert.Throws<OptionArgumentException>(() => ParseOptions(options, "/o=bob"));
+            Assert.Throws<OptionArgumentException>(() => ParseSlashOptions(options, "/o=bob"));
         }
     }
 }

@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Nito.OptionParsing.Lexing;
 
-// TODO: Disable slash arguments by default, since they prevent files used as positional arguments on /-based file systems.
-
 namespace Nito.OptionParsing.LowLevel
 {
     public sealed class OptionParser: IEnumerable<ParsedOption>
@@ -26,6 +24,11 @@ namespace Nito.OptionParsing.LowLevel
         private readonly IEnumerable<string> _commandLine;
 
         /// <summary>
+        /// Whether slash arguments are enabled.
+        /// </summary>
+        private readonly bool _slashOptionsEnabled;
+
+        /// <summary>
         /// The last option read, or <c>null</c> if there is no option context. If this is not <c>null</c>, then it is an option that can take an argument (i.e., <see cref="OptionDefinition.Argument"/> will not be <see cref="OptionArgument.None"/>). This is always <c>null</c> if <see cref="_done"/> is <c>true</c>.
         /// </summary>
         private OptionDefinition _lastOption;
@@ -38,11 +41,13 @@ namespace Nito.OptionParsing.LowLevel
         /// <param name="commandLine">The command line to parse, not including the process name. If <c>null</c>, the process' command line is lexed by <see cref="Win32CommandLineLexer"/>.</param>
         /// <param name="definitions">The option definitions. May not be <c>null</c>.</param>
         /// <param name="stringComparer">The string comparer to use when parsing options. If <c>null</c>, then the string comparer for the current culture is used.</param>
-        public OptionParser(StringComparer stringComparer, IReadOnlyCollection<OptionDefinition> definitions, IEnumerable<string> commandLine)
+        /// <param name="slashArgumentsEnabled">Whether slash arguments are enabled.</param>
+        public OptionParser(StringComparer stringComparer, IReadOnlyCollection<OptionDefinition> definitions, IEnumerable<string> commandLine, bool slashArgumentsEnabled)
         {
             _stringComparer = stringComparer ?? StringComparer.CurrentCulture;
             _definitions = definitions ?? throw new ArgumentNullException(nameof(definitions));
             _commandLine = commandLine ?? Win32CommandLineLexer.Instance.Lex().Skip(1);
+            _slashOptionsEnabled = slashArgumentsEnabled;
 
             // Ensure that the option definitions are valid and names are unique.
             foreach (var definition in _definitions)
@@ -218,7 +223,7 @@ namespace Nito.OptionParsing.LowLevel
                     continue;
                 }
 
-                if (value.StartsWith("/"))
+                if (_slashOptionsEnabled && value.StartsWith("/"))
                 {
                     // Short or long option
 

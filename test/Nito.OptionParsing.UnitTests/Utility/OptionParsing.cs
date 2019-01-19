@@ -11,12 +11,22 @@ namespace Nito.OptionParsing.UnitTests.Utility
     {
         public static List<ParsedOption> ParseOptions(IReadOnlyCollection<OptionDefinition> definitions, params string[] commandLine)
         {
-            return new OptionParser(StringComparer.InvariantCulture, definitions ?? new OptionDefinition[0], commandLine).ToList();
+            return new OptionParser(StringComparer.InvariantCulture, definitions ?? new OptionDefinition[0], commandLine, false).ToList();
         }
 
         public static List<ParsedOption> ParseOptionsIgnoringCase(IReadOnlyCollection<OptionDefinition> definitions, params string[] commandLine)
         {
-            return new OptionParser(StringComparer.InvariantCultureIgnoreCase, definitions ?? new OptionDefinition[0], commandLine).ToList();
+            return new OptionParser(StringComparer.InvariantCultureIgnoreCase, definitions ?? new OptionDefinition[0], commandLine, false).ToList();
+        }
+
+        public static List<ParsedOption> ParseSlashOptions(IReadOnlyCollection<OptionDefinition> definitions, params string[] commandLine)
+        {
+            return new OptionParser(StringComparer.InvariantCulture, definitions ?? new OptionDefinition[0], commandLine, true).ToList();
+        }
+
+        public static List<ParsedOption> ParseSlashOptionsIgnoringCase(IReadOnlyCollection<OptionDefinition> definitions, params string[] commandLine)
+        {
+            return new OptionParser(StringComparer.InvariantCultureIgnoreCase, definitions ?? new OptionDefinition[0], commandLine, true).ToList();
         }
 
         public static readonly IEqualityComparer<ParsedOption> ParsedOptionComparer = EqualityComparerBuilder.For<ParsedOption>()

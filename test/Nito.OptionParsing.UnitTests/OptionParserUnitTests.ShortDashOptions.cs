@@ -290,7 +290,7 @@ namespace Nito.OptionParsing.UnitTests
             {
                 new OptionDefinition { ShortName = '-' },
             };
-            var result = ParseOptions(options, "/-");
+            var result = ParseSlashOptions(options, "/-");
             Assert.Equal(new[]
             {
                 new ParsedOption { Definition = options[0] },

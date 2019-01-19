@@ -36,7 +36,8 @@ namespace Nito.OptionParsing
         /// <param name="argumentsObject">The arguments object that is initialized. May not be <c>null</c>.</param>
         /// <param name="commandLine">The command line to parse, not including the process name. If <c>null</c>, the process' command line is lexed by <see cref="Nito.OptionParsing.Lexing.Win32CommandLineLexer"/>.</param>
         /// <param name="stringComparer">The string comparison to use when parsing options. If <c>null</c>, then the string comparer for the current culture is used.</param>
-        public static void Parse<T>(this T argumentsObject, IEnumerable<string> commandLine = null, StringComparer stringComparer = null)
+        /// <param name="slashArgumentsEnabled">Whether slash arguments are enabled.</param>
+        public static void Parse<T>(this T argumentsObject, IEnumerable<string> commandLine = null, StringComparer stringComparer = null, bool slashArgumentsEnabled = false)
             where T : class, ICommandLineOptions
         {
             if (stringComparer == null)
@@ -192,7 +193,7 @@ namespace Nito.OptionParsing
             }
 
             // Parse the command line, filling in the property values.
-            var parser = new OptionParser(stringComparer, optionDefinitions, commandLine);
+            var parser = new OptionParser(stringComparer, optionDefinitions, commandLine, slashArgumentsEnabled);
             int positionalArgumentIndex = 0;
             foreach (var option in parser)
             {
