@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Nito.OptionParsing
 {
-    public static class CommandLineOptionParser
+    public static class CommandLineOptionsParser
     {
         /// <summary>
         /// Parses the command line into this command line options object. Option definitions are determined by the attributes on the properties of <paramref name="commandLineOptions"/>. This method will call <see cref="ICommandLineOptions.Validate"/>.
