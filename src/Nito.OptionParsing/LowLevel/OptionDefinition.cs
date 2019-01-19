@@ -33,5 +33,17 @@ namespace Nito.OptionParsing.LowLevel
         /// Whether this option takes an argument.
         /// </summary>
         public OptionArgument Argument { get; set; }
+
+        /// <summary>
+        /// Ensures that the option definition is valid. Throws <see cref="InvalidOperationException"/> if this option definition is invalid.
+        /// </summary>
+        public void Validate()
+        {
+            var name = Name;
+            if (name == null)
+                throw new InvalidOperationException("Option must have either a long name or a short name.");
+            if (name.IndexOfAny(Constants.ArgumentDelimiters) != -1)
+                throw new InvalidOperationException($"Option {name} may not have ':' or '=' in its name.");
+        }
     }
 }

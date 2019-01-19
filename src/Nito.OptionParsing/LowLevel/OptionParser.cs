@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Nito.OptionParsing.Lexing;
 
+// TODO: Disable slash arguments by default, since they prevent files used as positional arguments on /-based file systems.
+
 namespace Nito.OptionParsing.LowLevel
 {
     public sealed class OptionParser: IEnumerable<ParsedOption>
     {
-        private static readonly char[] ArgumentDelimiters = { ':', '=' };
-
         /// <summary>
         /// The string comparer to use when parsing options. This is never <c>null</c>.
         /// </summary>
@@ -43,6 +43,22 @@ namespace Nito.OptionParsing.LowLevel
             _stringComparer = stringComparer ?? StringComparer.CurrentCulture;
             _definitions = definitions ?? throw new ArgumentNullException(nameof(definitions));
             _commandLine = commandLine ?? Win32CommandLineLexer.Instance.Lex().Skip(1);
+
+            // Ensure that the option definitions are valid and names are unique.
+            foreach (var definition in _definitions)
+                definition.Validate();
+            EnsureUnique("short name", _definitions.Where(x => x.ShortName != null).Select(x => x.ShortName.Value));
+            EnsureUnique("long name", _definitions.Where(x => x.LongName != null).Select(x => x.LongName));
+
+            void EnsureUnique<T>(string fieldName, IEnumerable<T> items)
+            {
+                var values = new HashSet<T>();
+                foreach (var item in items)
+                {
+                    if (!values.Add(item))
+                        throw new InvalidOperationException($"Duplicate {fieldName} found for option {item}.");
+                }
+            }
         }
 
         /// <summary>
@@ -98,7 +114,7 @@ namespace Nito.OptionParsing.LowLevel
 
                     string option;
                     string argument = null;
-                    var argumentIndex = value.IndexOfAny(ArgumentDelimiters, 2);
+                    var argumentIndex = value.IndexOfAny(Constants.ArgumentDelimiters, 2);
                     if (argumentIndex == -1)
                     {
                         // No argument delimiters were found; the command line element is an option.
@@ -157,7 +173,7 @@ namespace Nito.OptionParsing.LowLevel
                         throw new UnknownOptionException($"Unknown option {option} in parameter {value}");
 
                     // The first short option may either have an argument or start a short option run
-                    var argumentIndex = value.IndexOfAny(ArgumentDelimiters, 2);
+                    var argumentIndex = value.IndexOfAny(Constants.ArgumentDelimiters, 2);
                     if (argumentIndex == 2)
                     {
                         // The first short option has an argument.
@@ -217,7 +233,7 @@ namespace Nito.OptionParsing.LowLevel
 
                     string option;
                     string argument = null;
-                    var argumentIndex = value.IndexOfAny(ArgumentDelimiters, 2);
+                    var argumentIndex = value.IndexOfAny(Constants.ArgumentDelimiters, 2);
                     if (argumentIndex == -1)
                     {
                         option = value.Substring(1);

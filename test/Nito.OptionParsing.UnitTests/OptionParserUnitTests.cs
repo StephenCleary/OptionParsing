@@ -21,18 +21,6 @@ namespace Nito.OptionParsing.UnitTests
         }
 
         [Fact]
-        public void SingleDash_Throws()
-        {
-            Assert.Throws<InvalidParameterException>(() => ParseOptions(null, "-"));
-        }
-
-        [Fact]
-        public void SingleSlash_Throws()
-        {
-            Assert.Throws<InvalidParameterException>(() => ParseOptions(null, "/"));
-        }
-
-        [Fact]
         public void PositionalArguments()
         {
             var result = ParseOptions(null, "bob");
@@ -61,6 +49,70 @@ namespace Nito.OptionParsing.UnitTests
                 new ParsedOption { Argument = "/o" },
                 new ParsedOption { Argument = "/option" },
             }, result, ParsedOptionComparer);
+        }
+
+        [Fact]
+        public void SingleDash_Throws()
+        {
+            Assert.Throws<InvalidParameterException>(() => ParseOptions(null, "-"));
+        }
+
+        [Fact]
+        public void SingleSlash_Throws()
+        {
+            Assert.Throws<InvalidParameterException>(() => ParseOptions(null, "/"));
+        }
+
+        [Fact]
+        public void Option_WithoutName_Throws()
+        {
+            var options = new[]
+            {
+                new OptionDefinition(),
+            };
+            Assert.Throws<InvalidOperationException>(() => ParseOptions(options));
+        }
+
+        [Fact]
+        public void OptionShortName_IsArgumentDelimiter_Throws()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = ':' },
+            };
+            Assert.Throws<InvalidOperationException>(() => ParseOptions(options));
+        }
+
+        [Fact]
+        public void OptionLongName_ContainsArgumentDelimiter_Throws()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { LongName = "a=b" },
+            };
+            Assert.Throws<InvalidOperationException>(() => ParseOptions(options));
+        }
+
+        [Fact]
+        public void Options_WithSameShortName_Throws()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'x' },
+                new OptionDefinition { ShortName = 'x' },
+            };
+            Assert.Throws<InvalidOperationException>(() => ParseOptions(options));
+        }
+
+        [Fact]
+        public void Options_WithSameLongName_Throws()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { LongName = "and" },
+                new OptionDefinition { LongName = "and" },
+            };
+            Assert.Throws<InvalidOperationException>(() => ParseOptions(options));
         }
     }
 }
