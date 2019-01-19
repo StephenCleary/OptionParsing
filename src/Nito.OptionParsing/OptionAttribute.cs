@@ -1,4 +1,5 @@
 ﻿using System;
+using Nito.OptionParsing.Converters;
 
 namespace Nito.OptionParsing
 {
@@ -48,5 +49,10 @@ namespace Nito.OptionParsing
         /// Whether this option takes an argument.
         /// </summary>
         public OptionArgument Argument { get; set; }
+
+        /// <summary>
+        /// Specifies a custom converter for this property. The converter must implement <see cref="IOptionArgumentValueConverter"/>.
+        /// </summary>
+        public Type Converter { get; set; }
     }
 }

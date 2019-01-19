@@ -1,4 +1,5 @@
 ﻿using System;
+using Nito.OptionParsing.Converters;
 
 namespace Nito.OptionParsing
 {
@@ -8,5 +9,9 @@ namespace Nito.OptionParsing
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class PositionalArgumentsAttribute: Attribute
     {
+        /// <summary>
+        /// Specifies a custom converter for this property. The converter must implement <see cref="IOptionArgumentValueConverter"/>.
+        /// </summary>
+        public Type Converter { get; set; }
     }
 }
