@@ -41,13 +41,13 @@ namespace Nito.OptionParsing.LowLevel
         /// <param name="commandLine">The command line to parse, not including the process name. If <c>null</c>, the process' command line is lexed by <see cref="Win32CommandLineLexer"/>.</param>
         /// <param name="definitions">The option definitions. May not be <c>null</c>.</param>
         /// <param name="stringComparer">The string comparer to use when parsing options. If <c>null</c>, then the string comparer for the current culture is used.</param>
-        /// <param name="slashArgumentsEnabled">Whether slash arguments are enabled.</param>
-        public OptionParser(StringComparer stringComparer, IReadOnlyCollection<OptionDefinition> definitions, IEnumerable<string> commandLine, bool slashArgumentsEnabled)
+        /// <param name="slashOptionsEnabled">Whether slash arguments are enabled.</param>
+        public OptionParser(StringComparer stringComparer, IReadOnlyCollection<OptionDefinition> definitions, IEnumerable<string> commandLine, bool slashOptionsEnabled)
         {
             _stringComparer = stringComparer ?? StringComparer.CurrentCulture;
             _definitions = definitions ?? throw new ArgumentNullException(nameof(definitions));
             _commandLine = commandLine ?? Win32CommandLineLexer.Instance.Lex().Skip(1);
-            _slashOptionsEnabled = slashArgumentsEnabled;
+            _slashOptionsEnabled = slashOptionsEnabled;
 
             // Ensure that the option definitions are valid and names are unique.
             foreach (var definition in _definitions)
