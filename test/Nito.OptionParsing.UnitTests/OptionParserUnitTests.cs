@@ -7,7 +7,7 @@ using static Nito.OptionParsing.UnitTests.Utility.OptionParsing;
 
 namespace Nito.OptionParsing.UnitTests
 {
-    public partial class OptionParserUnitTest
+    public class OptionParserUnitTest
     {
         [Fact]
         public void Option_NotPassed_NotIncludedInOutput()

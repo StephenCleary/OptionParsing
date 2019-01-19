@@ -61,6 +61,8 @@ namespace Nito.OptionParsing
             var selected = OptionArgumentValueConverters.FirstOrDefault(x => x.CanConvert(type));
             if (selected != null)
                 return MakeAction(type, selected);
+            if (type == typeof(string))
+                return Identity;
 
             var tryParse = type.GetMethod(
                 "TryParse",
@@ -82,7 +84,9 @@ namespace Nito.OptionParsing
 
             Func<string, object> MakeAction(Type t, IOptionArgumentValueConverter parser) => value => parser.TryConvert(t, value);
         }
-        
+
+        private static readonly Func<string, object> Identity = x => x;
+
         /// <summary>
         /// Creates a converter instance if one is specified. Only returns <c>null</c> if <paramref name="type"/> is <c>null</c>.
         /// </summary>
