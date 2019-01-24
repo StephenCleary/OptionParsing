@@ -145,6 +145,12 @@ namespace Nito.OptionParsing.UnitTests
             Assert.Equal(13, result.Level);
         }
 
+        [Fact]
+        public void BuiltinConverter_UnparseableValue_Throws()
+        {
+            Assert.Throws<OptionArgumentException>(() => Parse<BuiltinConverter>("-l", "bob"));
+        }
+
         private sealed class BuiltinNullableConverter : CommandLineOptionsBase
         {
             [Option("level", 'l')] public int? Level { get; set; }
@@ -155,6 +161,12 @@ namespace Nito.OptionParsing.UnitTests
         {
             var result = Parse<BuiltinNullableConverter>("-l", "13");
             Assert.Equal(13, result.Level);
+        }
+
+        [Fact]
+        public void BuiltinNullableConverter_UnparseableValue_Throws()
+        {
+            Assert.Throws<OptionArgumentException>(() => Parse<BuiltinNullableConverter>("-l", "bob"));
         }
 
         private sealed class BuiltinEnumConverter : CommandLineOptionsBase
@@ -209,6 +221,12 @@ namespace Nito.OptionParsing.UnitTests
         {
             var result = Parse<BuiltinEnumConverter>("--animal", "mongoose");
             Assert.Equal(BuiltinEnumConverter.Animal.Mongoose, result.SelectedAnimal);
+        }
+
+        [Fact]
+        public void BuiltinEnumConverter_UnparseableValue_Throws()
+        {
+            Assert.Throws<OptionArgumentException>(() => Parse<BuiltinEnumConverter>("--animal", "bob"));
         }
     }
 }
