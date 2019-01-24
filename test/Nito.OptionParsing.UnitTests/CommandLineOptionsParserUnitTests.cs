@@ -203,5 +203,12 @@ namespace Nito.OptionParsing.UnitTests
         {
             Assert.Throws<OptionArgumentException>(() => Parse<BuiltinEnumConverter>("--animal:1000"));
         }
+
+        [Fact]
+        public void BuiltinEnumConverter_IsCaseInsensitive()
+        {
+            var result = Parse<BuiltinEnumConverter>("--animal", "mongoose");
+            Assert.Equal(BuiltinEnumConverter.Animal.Mongoose, result.SelectedAnimal);
+        }
     }
 }

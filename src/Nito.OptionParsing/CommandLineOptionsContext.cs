@@ -72,6 +72,7 @@ namespace Nito.OptionParsing
                 null);
             if (tryParse != null && tryParse.ReturnType == typeof(bool))
             {
+                // type.TryParse(value, out result)
                 return value =>
                 {
                     var arguments = new object[] { value, null };
@@ -82,17 +83,28 @@ namespace Nito.OptionParsing
 
             if (type.IsEnum)
             {
-                return value =>
+                // Enum.TryParse<type>(value, true, out result)
+                var genericEnumTryParse = typeof(Enum)
+                    .GetMethods(BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public)
+                    .Where(x => x.Name == "TryParse" && x.IsGenericMethod && x.ContainsGenericParameters)
+                    .Select(x => new { Method = x, Parameters = x.GetParameters(), Arguments = x.GetGenericArguments() })
+                    .Where(x => x.Arguments.Length == 1 &&
+                                x.Parameters.Length == 3 &&
+                                x.Parameters[0].ParameterType == typeof(string) &&
+                                x.Parameters[1].ParameterType == typeof(bool) &&
+                                x.Parameters[2].ParameterType == x.Arguments[0].MakeByRefType())
+                    .Select(x => x.Method)
+                    .FirstOrDefault();
+                if (genericEnumTryParse != null)
                 {
-                    try
+                    var enumTryParse = genericEnumTryParse.MakeGenericMethod(type);
+                    return value =>
                     {
-                        return Enum.Parse(type, value);
-                    }
-                    catch (OverflowException)
-                    {
-                        return null;
-                    }
-                };
+                        var arguments = new object[] {value, true, null};
+                        var result = (bool) enumTryParse.Invoke(null, arguments);
+                        return result ? arguments[2] : null;
+                    };
+                }
             }
 
             return null;
