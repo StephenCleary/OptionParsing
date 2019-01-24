@@ -29,6 +29,8 @@ namespace Nito.OptionParsing.UnitTests.Utility
             return new OptionParser(StringComparer.InvariantCultureIgnoreCase, definitions ?? new OptionDefinition[0], commandLine, true).ToList();
         }
 
+        public static T Parse<T>(params string[] commandLine) where T: class, ICommandLineOptions => CommandLineOptionsParser.Parse<T>(commandLine);
+
         public static readonly IEqualityComparer<ParsedOption> ParsedOptionComparer = EqualityComparerBuilder.For<ParsedOption>()
             .EquateBy(x => x.Definition).ThenEquateBy(x => x.Argument);
 
