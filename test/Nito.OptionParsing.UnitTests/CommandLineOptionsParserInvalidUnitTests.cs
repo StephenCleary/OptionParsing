@@ -13,7 +13,7 @@ namespace Nito.OptionParsing.UnitTests
     {
         private sealed class OptionPresentNoMatch : CommandLineOptionsBase
         {
-            [Option("and", 'a', OptionArgument.Optional)] public string SimpleOption { get; set; } = "default";
+            [Option("and", 'a', OptionArgument.Optional)] public string SimpleOption { get; set; }
             [OptionPresent('z')] public bool SimpleOptionPresent { get; set; }
         }
 
@@ -22,11 +22,21 @@ namespace Nito.OptionParsing.UnitTests
 
         private sealed class OptionPresentNonBoolean : CommandLineOptionsBase
         {
-            [Option("and", 'a', OptionArgument.Optional)] public string SimpleOption { get; set; } = "default";
+            [Option("and", 'a', OptionArgument.Optional)] public string SimpleOption { get; set; }
             [OptionPresent('a')] public string SimpleOptionPresent { get; set; }
         }
 
         [Fact]
         public void OptionPresent_NonBoolean_Throws() => Assert.Throws<InvalidOperationException>(() => Parse<OptionPresentNonBoolean>());
+
+        private sealed class CustomTypeWithoutConverter : CommandLineOptionsBase
+        {
+            [Option("level", 'l')] public CustomType SimpleOption { get; set; }
+            public sealed class CustomType { }
+        }
+
+        [Fact]
+        public void CustomType_WithoutConverter_Throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<CustomTypeWithoutConverter>());
     }
 }

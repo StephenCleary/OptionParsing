@@ -156,5 +156,52 @@ namespace Nito.OptionParsing.UnitTests
             var result = Parse<BuiltinNullableConverter>("-l", "13");
             Assert.Equal(13, result.Level);
         }
+
+        private sealed class BuiltinEnumConverter : CommandLineOptionsBase
+        {
+            [Flags]
+            public enum Animal : byte
+            {
+                None,
+                Dog,
+                Cat,
+                Mongoose
+            }
+            [Option("animal")] public Animal SelectedAnimal { get; set; }
+        }
+
+        [Fact]
+        public void BuiltinEnumConverter_NoValues()
+        {
+            var result = Parse<BuiltinEnumConverter>();
+            Assert.Equal(BuiltinEnumConverter.Animal.None, result.SelectedAnimal);
+        }
+
+        [Fact]
+        public void BuiltinEnumConverter_SingleValue()
+        {
+            var result = Parse<BuiltinEnumConverter>("--animal=Mongoose");
+            Assert.Equal(BuiltinEnumConverter.Animal.Mongoose, result.SelectedAnimal);
+        }
+
+        [Fact]
+        public void BuiltinEnumConverter_MultipleValues()
+        {
+            var result = Parse<BuiltinEnumConverter>("--animal:Cat,Dog");
+            Assert.Equal(BuiltinEnumConverter.Animal.Cat | BuiltinEnumConverter.Animal.Dog, result.SelectedAnimal);
+        }
+
+        [Fact]
+        public void BuiltinEnumConverter_Numeric()
+        {
+            var result = Parse<BuiltinEnumConverter>("--animal:1");
+            Assert.Equal(BuiltinEnumConverter.Animal.Dog, result.SelectedAnimal);
+        }
+
+        [Fact]
+        public void BuiltinEnumConverter_Numeric_OutOfUnderlyingTypeRange()
+        {
+            Assert.Throws<OptionArgumentException>(() => Parse<BuiltinEnumConverter>("--animal:1000"));
+        }
     }
 }

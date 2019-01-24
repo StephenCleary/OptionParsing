@@ -80,6 +80,21 @@ namespace Nito.OptionParsing
                 };
             }
 
+            if (type.IsEnum)
+            {
+                return value =>
+                {
+                    try
+                    {
+                        return Enum.Parse(type, value);
+                    }
+                    catch (OverflowException)
+                    {
+                        return null;
+                    }
+                };
+            }
+
             return null;
 
             Func<string, object> MakeAction(Type t, IOptionArgumentValueConverter parser) => value => parser.TryConvert(t, value);
