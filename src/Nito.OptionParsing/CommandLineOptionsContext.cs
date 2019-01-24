@@ -50,11 +50,11 @@ namespace Nito.OptionParsing
 
         /// <summary>
         /// Creates a parsing delegate for a specified type. Uses <paramref name="converter"/> if it's compatible; otherwise uses the first compatible match from <see cref="OptionArgumentValueConverters"/>; otherwise attempts to call a <c>TryParse</c> method via reflection.
-        /// If no parser can be found, throws <see cref="InvalidOperationException"/> eagerly (i.e., before parsing user input).
+        /// If no parser can be found, returns <c>null</c>.
         /// </summary>
         /// <param name="type">The type to convert to. May not be <c>null</c>.</param>
         /// <param name="converter">The custom converter, if any. May be <c>null</c>.</param>
-        private Func<string, object> GetParser(Type type, IOptionArgumentValueConverter converter)
+        private Func<string, object> TryGetExactParser(Type type, IOptionArgumentValueConverter converter)
         {
             if (converter != null && converter.CanConvert(type))
                 return MakeAction(type, converter);
@@ -80,9 +80,31 @@ namespace Nito.OptionParsing
                 };
             }
 
-            throw new InvalidOperationException($"Cannot determine how to parse option argument value of type {type.Name}.");
+            return null;
 
             Func<string, object> MakeAction(Type t, IOptionArgumentValueConverter parser) => value => parser.TryConvert(t, value);
+        }
+
+        /// <summary>
+        /// Creates a parsing delegate for a specified type. Uses <paramref name="converter"/> if it's compatible; otherwise uses the first compatible match from <see cref="OptionArgumentValueConverters"/>; otherwise attempts to call a <c>TryParse</c> method via reflection.
+        /// If no parser can be found, throws <see cref="InvalidOperationException"/> eagerly (i.e., before parsing user input).
+        /// </summary>
+        /// <param name="type">The type to convert to. May not be <c>null</c>.</param>
+        /// <param name="converter">The custom converter, if any. May be <c>null</c>.</param>
+        private Func<string, object> GetParser(Type type, IOptionArgumentValueConverter converter)
+        {
+            var result = TryGetExactParser(type, converter);
+            if (result != null)
+                return result;
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                result = TryGetExactParser(type.GenericTypeArguments[0], converter);
+                if (result != null)
+                    return result;
+            }
+
+            throw new InvalidOperationException($"Cannot determine how to parse option argument value of type {type.Name}.");
         }
 
         private static readonly Func<string, object> Identity = x => x;
