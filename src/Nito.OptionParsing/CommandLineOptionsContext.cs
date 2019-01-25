@@ -17,6 +17,7 @@ namespace Nito.OptionParsing
             OptionArgumentValueConverters = settings?.OptionArgumentValueConverters ?? new IOptionArgumentValueConverter[0];
             StringComparer = settings?.StringComparer ?? StringComparer.CurrentCulture;
             SlashOptionsEnabled = settings?.SlashOptionsEnabled ?? false;
+            ParseOptionsAfterPositionalArguments = settings?.ParseOptionsAfterPositionalArguments ?? true;
         }
 
         /// <summary>
@@ -33,6 +34,11 @@ namespace Nito.OptionParsing
         /// Whether options can be passed with '/'.
         /// </summary>
         private bool SlashOptionsEnabled { get; }
+
+        /// <summary>
+        /// Whether options should be parsed after positional arguments.
+        /// </summary>
+        private bool ParseOptionsAfterPositionalArguments { get; }
 
         /// <summary>
         /// Actions to take as options are seen.
@@ -319,7 +325,7 @@ namespace Nito.OptionParsing
         {
             ApplyAttributes(commandLineOptions);
             ValidateAttributes();
-            var parser = new OptionParser(StringComparer, OptionActions.Keys, commandLine, SlashOptionsEnabled);
+            var parser = new OptionParser(StringComparer, OptionActions.Keys, commandLine, SlashOptionsEnabled, ParseOptionsAfterPositionalArguments);
             ApplyCommandLineOptions(parser);
             commandLineOptions.Done(_settings);
             commandLineOptions.Validate();

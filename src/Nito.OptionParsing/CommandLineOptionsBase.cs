@@ -13,6 +13,16 @@ namespace Nito.OptionParsing
         [PositionalArguments]
         protected List<string> AdditionalArguments { get; private set; } = new List<string>();
 
+        /// <summary>
+        /// Retrieves <see cref="AdditionalArguments"/> and then sets <see cref="AdditionalArguments"/> to a new empty list.
+        /// </summary>
+        protected List<string> GetAndResetAdditionalArguments()
+        {
+            var result = AdditionalArguments;
+            AdditionalArguments = new List<string>();
+            return result;
+        }
+
         /// <inheritdoc />
         /// <summary>
         /// This implementation checks to ensure that <see cref="P:Nito.OptionParsing.CommandLineOptionsBase.AdditionalArguments" /> is empty. Derived classes do not have to invoke the base method, if they wish to allow additional positional arguments.
@@ -24,17 +34,11 @@ namespace Nito.OptionParsing
         }
 
         /// <inheritdoc />
+        /// <summary>
+        /// This implementation does nothing.
+        /// </summary>
         public virtual void Done(CommandLineOptionsSettings settings)
         {
-            if (AdditionalArguments.Count == _additionalArgumentsCount)
-                return;
-
-            var additionalArguments = AdditionalArguments;
-            _additionalArgumentsCount = AdditionalArguments.Count;
-            AdditionalArguments = new List<string>();
-            this.Apply(additionalArguments, settings);
         }
-
-        private int _additionalArgumentsCount;
     }
 }

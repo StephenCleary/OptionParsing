@@ -25,5 +25,10 @@ namespace Nito.OptionParsing
         /// Whether options can be passed with '/'. Note that if you set this to <c>true</c>, then you cannot treat filenames starting with a '/' as positional arguments.
         /// </summary>
         public bool SlashOptionsEnabled { get; set; }
+
+        /// <summary>
+        /// Whether options should be parsed after positional arguments. If <c>false</c>, all arguments after the first positional argument are treated as positional arguments. Defaults to <c>true</c>.
+        /// </summary>
+        public bool ParseOptionsAfterPositionalArguments { get; set; } = true;
     }
 }

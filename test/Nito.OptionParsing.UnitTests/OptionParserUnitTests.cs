@@ -35,13 +35,29 @@ namespace Nito.OptionParsing.UnitTests
         }
 
         [Fact]
-        public void Options_AfterPositionalArguments_TreatedAsPositionalArguments()
+        public void Options_AfterPositionalArguments_WithParsingFlag_AreParsed()
         {
             var options = new[]
             {
-                new OptionDefinition { ShortName = 'a', LongName = "and" },
+                new OptionDefinition { ShortName = 'a', LongName = "and", Argument = OptionArgument.Optional },
             };
             var result = ParseOptions(options, "0", "-a", "1");
+            Assert.Equal(new[]
+            {
+                new ParsedOption { Argument = "0" },
+                new ParsedOption { Definition = options[0], Argument = "1" },
+            }, result, ParsedOptionComparer);
+        }
+
+        [Fact]
+        public void Options_AfterPositionalArguments_WithoutParsingFlag_TreatedAsPositionalArguments()
+        {
+            var options = new[]
+            {
+                new OptionDefinition { ShortName = 'a', LongName = "and", Argument = OptionArgument.Optional },
+            };
+            var result = new OptionParser(StringComparer.InvariantCulture, options, new[] { "0", "-a", "1" }, false,
+                parseOptionsAfterPositionalArguments: false).ToList();
             Assert.Equal(new[]
             {
                 new ParsedOption { Argument = "0" },

@@ -203,6 +203,7 @@ namespace Nito.OptionParsing.UnitTests
         private sealed class MixedPositionalAndOptions : CommandLineOptionsBase
         {
             [PositionalArgument(0)] public string First { get; set; }
+            [PositionalArgument(1)] public string Second { get; set; }
             [Option("level", 'l')] public string Level { get; set; }
         }
 
@@ -212,6 +213,15 @@ namespace Nito.OptionParsing.UnitTests
             var result = Parse<MixedPositionalAndOptions>("test", "-l:bob");
             Assert.Equal("test", result.First);
             Assert.Equal("bob", result.Level);
+        }
+
+        [Fact]
+        public void Option_BetweenPositionalArguments_IsAcceptedByDefault()
+        {
+            var result = Parse<MixedPositionalAndOptions>("test", "-l:bob", "another");
+            Assert.Equal("test", result.First);
+            Assert.Equal("bob", result.Level);
+            Assert.Equal("another", result.Second);
         }
 
         private sealed class BuiltinConverter : CommandLineOptionsBase

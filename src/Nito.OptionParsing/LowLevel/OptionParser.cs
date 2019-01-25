@@ -29,6 +29,11 @@ namespace Nito.OptionParsing.LowLevel
         private readonly bool _slashOptionsEnabled;
 
         /// <summary>
+        /// Whether options should be parsed after positional arguments.
+        /// </summary>
+        private readonly bool _parseOptionsAfterPositionalArguments;
+
+        /// <summary>
         /// The last option read, or <c>null</c> if there is no option context. If this is not <c>null</c>, then it is an option that can take an argument (i.e., <see cref="OptionDefinition.Argument"/> will not be <see cref="OptionArgument.None"/>). This is always <c>null</c> if <see cref="_done"/> is <c>true</c>.
         /// </summary>
         private OptionDefinition _lastOption;
@@ -42,12 +47,14 @@ namespace Nito.OptionParsing.LowLevel
         /// <param name="definitions">The option definitions. May not be <c>null</c>.</param>
         /// <param name="stringComparer">The string comparer to use when parsing options. If <c>null</c>, then the string comparer for the current culture is used.</param>
         /// <param name="slashOptionsEnabled">Whether slash arguments are enabled.</param>
-        public OptionParser(StringComparer stringComparer, IReadOnlyCollection<OptionDefinition> definitions, IEnumerable<string> commandLine, bool slashOptionsEnabled)
+        /// <param name="parseOptionsAfterPositionalArguments">Whether options should be parsed after positional arguments.</param>
+        public OptionParser(StringComparer stringComparer, IReadOnlyCollection<OptionDefinition> definitions, IEnumerable<string> commandLine, bool slashOptionsEnabled, bool parseOptionsAfterPositionalArguments)
         {
             _stringComparer = stringComparer ?? StringComparer.CurrentCulture;
             _definitions = definitions ?? throw new ArgumentNullException(nameof(definitions));
             _commandLine = commandLine ?? Win32CommandLineLexer.Instance.Lex().Skip(1);
             _slashOptionsEnabled = slashOptionsEnabled;
+            _parseOptionsAfterPositionalArguments = parseOptionsAfterPositionalArguments;
 
             // Ensure that the option definitions are valid and names are unique.
             foreach (var definition in _definitions)
@@ -283,8 +290,9 @@ namespace Nito.OptionParsing.LowLevel
                     continue;
                 }
 
-                // The first positional argument
-                _done = true;
+                // A positional argument
+                if (!_parseOptionsAfterPositionalArguments)
+                    _done = true;
                 yield return new ParsedOption { Argument = value };
             }
 
