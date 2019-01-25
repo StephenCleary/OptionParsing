@@ -13,6 +13,7 @@ namespace Nito.OptionParsing
         /// <param name="settings">May be <c>null</c>.</param>
         public CommandLineOptionsContext(CommandLineOptionsSettings settings)
         {
+            _settings = settings;
             OptionArgumentValueConverters = settings?.OptionArgumentValueConverters ?? new IOptionArgumentValueConverter[0];
             StringComparer = settings?.StringComparer ?? StringComparer.CurrentCulture;
             SlashOptionsEnabled = settings?.SlashOptionsEnabled ?? false;
@@ -320,8 +321,10 @@ namespace Nito.OptionParsing
             ValidateAttributes();
             var parser = new OptionParser(StringComparer, OptionActions.Keys, commandLine, SlashOptionsEnabled);
             ApplyCommandLineOptions(parser);
-            commandLineOptions.Done();
+            commandLineOptions.Done(_settings);
             commandLineOptions.Validate();
         }
+
+        private readonly CommandLineOptionsSettings _settings;
     }
 }

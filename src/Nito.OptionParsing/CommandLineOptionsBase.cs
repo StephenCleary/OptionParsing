@@ -11,7 +11,7 @@ namespace Nito.OptionParsing
         /// The list of additional positional arguments after those specified by <see cref="PositionalArgumentAttribute"/>.
         /// </summary>
         [PositionalArguments]
-        public List<string> AdditionalArguments { get; } = new List<string>();
+        public List<string> AdditionalArguments { get; private set; } = new List<string>();
 
         /// <inheritdoc />
         /// <summary>
@@ -24,8 +24,17 @@ namespace Nito.OptionParsing
         }
 
         /// <inheritdoc />
-        public virtual void Done()
+        public virtual void Done(CommandLineOptionsSettings settings)
         {
+            if (AdditionalArguments.Count != _additionalArgumentsCount)
+            {
+                var additionalArguments = AdditionalArguments;
+                _additionalArgumentsCount = AdditionalArguments.Count;
+                AdditionalArguments = new List<string>();
+                this.Apply(additionalArguments, settings);
+            }
         }
+
+        private int _additionalArgumentsCount;
     }
 }

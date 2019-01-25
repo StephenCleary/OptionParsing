@@ -189,7 +189,7 @@ namespace Nito.OptionParsing.UnitTests
         {
             [PositionalArguments] public List<int> More { get; set; } = new List<int>();
             public void Validate() { }
-            public void Done() { }
+            public void Done(CommandLineOptionsSettings settings) { }
         }
 
         [Fact]
@@ -206,9 +206,11 @@ namespace Nito.OptionParsing.UnitTests
         }
 
         [Fact]
-        public void Option_AfterPositionalArgument_Throws()
+        public void Option_AfterPositionalArgument_IsAcceptedByDefault()
         {
-            Assert.Throws<UnknownOptionException>(() => Parse<MixedPositionalAndOptions>("test", "-l:bob"));
+            var result = Parse<MixedPositionalAndOptions>("test", "-l:bob");
+            Assert.Equal("test", result.First);
+            Assert.Equal("bob", result.Level);
         }
 
         private sealed class BuiltinConverter : CommandLineOptionsBase
