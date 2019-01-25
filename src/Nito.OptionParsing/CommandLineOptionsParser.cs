@@ -13,13 +13,12 @@ namespace Nito.OptionParsing
         /// <typeparam name="T">The type of command line options object to initialize.</typeparam>
         /// <param name="commandLineOptions">The command line options object that is initialized. May not be <c>null</c>.</param>
         /// <param name="commandLine">The command line to parse, not including the process name. If <c>null</c>, the process' command line is lexed by <see cref="Nito.OptionParsing.Lexing.Win32CommandLineLexer"/>.</param>
-        /// <param name="settings">Settings that control how command-line options are parsed.</param>
-        public static void Apply<T>(this T commandLineOptions, IEnumerable<string> commandLine = null, CommandLineOptionsSettings settings = null)
+        public static void Apply<T>(this T commandLineOptions, IEnumerable<string> commandLine = null)
             where T : class, ICommandLineOptions
         {
             if (commandLineOptions == null)
                 throw new ArgumentNullException(nameof(commandLineOptions));
-            new CommandLineOptionsContext(settings).ParseCommandLineOptions(commandLineOptions, commandLine);
+            new CommandLineOptionsContext(commandLineOptions.CommandLineOptionsSettings).ParseCommandLineOptions(commandLineOptions, commandLine);
         }
 
         /// <summary>
@@ -27,12 +26,11 @@ namespace Nito.OptionParsing
         /// </summary>
         /// <typeparam name="T">The type of command line options object to initialize.</typeparam>
         /// <param name="commandLine">The command line to parse, not including the process name. If <c>null</c>, the process' command line is lexed by <see cref="Nito.OptionParsing.Lexing.Win32CommandLineLexer"/>.</param>
-        /// <param name="settings">Settings that control how command-line options are parsed.</param>
-        public static T Parse<T>(IEnumerable<string> commandLine = null, CommandLineOptionsSettings settings = null)
+        public static T Parse<T>(IEnumerable<string> commandLine = null)
             where T : class, ICommandLineOptions
         {
             var result = Activator.CreateInstance<T>();
-            result.Apply(commandLine, settings);
+            result.Apply(commandLine);
             return result;
         }
     }

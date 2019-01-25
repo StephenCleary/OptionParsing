@@ -189,8 +189,9 @@ namespace Nito.OptionParsing.UnitTests
         private sealed class ParsedPositionalArgumentsOptions : ICommandLineOptions
         {
             [PositionalArguments] public List<int> More { get; set; } = new List<int>();
+            public CommandLineOptionsSettings CommandLineOptionsSettings => null;
             public void Validate() { }
-            public void Done(CommandLineOptionsSettings settings) { }
+            public void Done() { }
         }
 
         [Fact]
@@ -352,16 +353,21 @@ namespace Nito.OptionParsing.UnitTests
 
         private sealed class ImplicitCustomConverter : CommandLineOptionsBase
         {
+            public ImplicitCustomConverter()
+            {
+                CommandLineOptionsSettings.OptionArgumentValueConverters = new List<IOptionArgumentValueConverter>
+                {
+                    new MyIntConverter()
+                };
+            }
+
             [Option("level")] public MyInt Level { get; set; }
         }
 
         [Fact]
         public void ImplicitCustomConverter_IsUsed()
         {
-            var result = Parse<ImplicitCustomConverter>(new CommandLineOptionsSettings
-            {
-                OptionArgumentValueConverters = new List<IOptionArgumentValueConverter> { new MyIntConverter() }
-            },"--level:5");
+            var result = Parse<ImplicitCustomConverter>("--level:5");
             Assert.Equal(5, result.Level.Value);
         }
 

@@ -7,6 +7,9 @@ namespace Nito.OptionParsing
     /// </summary>
     public abstract class CommandLineOptionsBase: ICommandLineOptions
     {
+        /// <inheritdoc />
+        public CommandLineOptionsSettings CommandLineOptionsSettings { get; } = new CommandLineOptionsSettings();
+
         /// <summary>
         /// The list of additional positional arguments after those specified by <see cref="PositionalArgumentAttribute"/>.
         /// </summary>
@@ -37,7 +40,7 @@ namespace Nito.OptionParsing
         /// <summary>
         /// This implementation does nothing.
         /// </summary>
-        public virtual void Done(CommandLineOptionsSettings settings)
+        public virtual void Done()
         {
         }
     }

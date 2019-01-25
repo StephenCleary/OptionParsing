@@ -34,8 +34,9 @@ namespace Nito.OptionParsing.UnitTests
 
         private sealed class OptionsWithoutPositionalArguments : ICommandLineOptions
         {
+            public CommandLineOptionsSettings CommandLineOptionsSettings => null;
             public void Validate() { }
-            public void Done(CommandLineOptionsSettings settings) { }
+            public void Done() { }
         }
 
         [Fact]
@@ -103,8 +104,9 @@ namespace Nito.OptionParsing.UnitTests
         private sealed class PositionalArgumentsAttributeWrongType : ICommandLineOptions
         {
             [PositionalArguments] public string More { get; set; }
+            public CommandLineOptionsSettings CommandLineOptionsSettings => null;
             public void Validate() { }
-            public void Done(CommandLineOptionsSettings settings) { }
+            public void Done() { }
         }
 
         [Fact]
@@ -119,8 +121,9 @@ namespace Nito.OptionParsing.UnitTests
                 public void Add(int val) { }
             }
             [PositionalArguments] public MyList More { get; set; } = new MyList();
+            public CommandLineOptionsSettings CommandLineOptionsSettings => null;
             public void Validate() { }
-            public void Done(CommandLineOptionsSettings settings) { }
+            public void Done() { }
         }
 
         [Fact]

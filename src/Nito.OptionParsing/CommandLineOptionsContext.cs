@@ -327,7 +327,7 @@ namespace Nito.OptionParsing
             ValidateAttributes();
             var parser = new OptionParser(StringComparer, OptionActions.Keys, commandLine, SlashOptionsEnabled, ParseOptionsAfterPositionalArguments);
             ApplyCommandLineOptions(parser);
-            commandLineOptions.Done(_settings);
+            commandLineOptions.Done();
             commandLineOptions.Validate();
         }
 

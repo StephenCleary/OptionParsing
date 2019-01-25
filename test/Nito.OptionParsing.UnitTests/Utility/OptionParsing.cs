@@ -31,8 +31,6 @@ namespace Nito.OptionParsing.UnitTests.Utility
 
         public static T Parse<T>(params string[] commandLine) where T: class, ICommandLineOptions => CommandLineOptionsParser.Parse<T>(commandLine);
 
-        public static T Parse<T>(CommandLineOptionsSettings settings, params string[] commandLine) where T : class, ICommandLineOptions => CommandLineOptionsParser.Parse<T>(commandLine, settings);
-
         public static readonly IEqualityComparer<ParsedOption> ParsedOptionComparer = EqualityComparerBuilder.For<ParsedOption>()
             .EquateBy(x => x.Definition).ThenEquateBy(x => x.Argument);
 

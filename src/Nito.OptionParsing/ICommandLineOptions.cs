@@ -6,9 +6,14 @@
     public interface ICommandLineOptions
     {
         /// <summary>
-        /// Invoked when the arguments have all been applied using the specified settings.
+        /// The settings to use when parsing this instance. This may be <c>null</c> to use default settings.
         /// </summary>
-        void Done(CommandLineOptionsSettings settings);
+        CommandLineOptionsSettings CommandLineOptionsSettings { get; }
+
+        /// <summary>
+        /// Invoked when the arguments have all been applied.
+        /// </summary>
+        void Done();
 
         /// <summary>
         /// Validates the arguments by throwing <see cref="OptionParsingException"/> errors as necessary.

@@ -9,6 +9,10 @@ namespace Nito.OptionParsing.UnitTests.UseCases
     {
         private sealed class Options: CommandLineOptionsBase
         {
+            // We have to set ParseOptionsAfterPositionalArguments to false so that all the subcommand options are collected together
+            //  in AdditionalArguments and passed to the subcommand option parsing.
+            public Options() => CommandLineOptionsSettings.ParseOptionsAfterPositionalArguments = false;
+
             public MeasureOptions Measure { get; set; }
             public CutOptions Cut { get; set; }
 
@@ -21,12 +25,12 @@ namespace Nito.OptionParsing.UnitTests.UseCases
             [PositionalArgument(0)]
             private Commands Command { get; set; }
 
-            public override void Done(CommandLineOptionsSettings settings)
+            public override void Done()
             {
                 if (Command == Commands.Measure)
-                    Measure = CommandLineOptionsParser.Parse<MeasureOptions>(GetAndResetAdditionalArguments(), settings);
+                    Measure = CommandLineOptionsParser.Parse<MeasureOptions>(GetAndResetAdditionalArguments());
                 else if (Command == Commands.Cut)
-                    Cut = CommandLineOptionsParser.Parse<CutOptions>(GetAndResetAdditionalArguments(), settings);
+                    Cut = CommandLineOptionsParser.Parse<CutOptions>(GetAndResetAdditionalArguments());
             }
 
             public override void Validate()
@@ -49,12 +53,5 @@ namespace Nito.OptionParsing.UnitTests.UseCases
                 [Option("Force", 'f')] public decimal Force { get; set; }
             }
         }
-
-        // We have to set ParseOptionsAfterPositionalArguments to false so that all the subcommand options are collected together
-        //  and passed to the subcommand option parsing.
-        private static readonly CommandLineOptionsSettings CommandsSettings = new CommandLineOptionsSettings
-        {
-            ParseOptionsAfterPositionalArguments = false,
-        };
     }
 }
