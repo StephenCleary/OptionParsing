@@ -87,8 +87,42 @@ namespace Nito.OptionParsing.UnitTests
         }
 
         [Fact]
-        public void NoPositionalArgumentsAttribute_Throws() =>
+        public void PositionalArgumentGap_Throws() =>
             Assert.Throws<InvalidOperationException>(() => Parse<PositionalArgumentGap>());
+
+        private sealed class MultiplePositionalArgumentsAttributes : CommandLineOptionsBase
+        {
+            [PositionalArguments] public List<string> More { get; set; } = new List<string>();
+        }
+
+        [Fact]
+        public void MultiplePositionalArgumentsAttributes_Throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<MultiplePositionalArgumentsAttributes>());
+
+        private sealed class PositionalArgumentsAttributeWrongType : ICommandLineOptions
+        {
+            [PositionalArguments] public string More { get; set; }
+            public void Validate() { }
+        }
+
+        [Fact]
+        public void PositionalArgumentsAttribute_WrongType_Throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<PositionalArgumentsAttributeWrongType>());
+
+        private sealed class PositionalArgumentsAttributeWeirdType : ICommandLineOptions
+        {
+            public class MyList
+            {
+                public void Add(string val) { }
+                public void Add(int val) { }
+            }
+            [PositionalArguments] public MyList More { get; set; } = new MyList();
+            public void Validate() { }
+        }
+
+        [Fact]
+        public void PositionalArgumentsAttribute_WeirdType_Throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<PositionalArgumentsAttributeWeirdType>());
 
         private sealed class CustomTypeWithoutConverter : CommandLineOptionsBase
         {

@@ -153,7 +153,7 @@ namespace Nito.OptionParsing.UnitTests
             Assert.True(result.FlagOption);
         }
 
-        private sealed class PositionalArgument : CommandLineOptionsBase
+        private sealed class PositionalArgumentOptions : CommandLineOptionsBase
         {
             [PositionalArgument(1)] public int Second { get; set; }
             [PositionalArgument(0)] public string First { get; set; }
@@ -162,7 +162,7 @@ namespace Nito.OptionParsing.UnitTests
         [Fact]
         public void PositionalArguments_AreUsed()
         {
-            var result = Parse<PositionalArgument>("a", "13");
+            var result = Parse<PositionalArgumentOptions>("a", "13");
             Assert.Equal("a", result.First);
             Assert.Equal(13, result.Second);
         }
@@ -170,7 +170,32 @@ namespace Nito.OptionParsing.UnitTests
         [Fact]
         public void PositionalArgument_UnparseableValue_Throws()
         {
-            Assert.Throws<OptionArgumentException>(() => Parse<PositionalArgument>("x", "y"));
+            Assert.Throws<OptionArgumentException>(() => Parse<PositionalArgumentOptions>("x", "y"));
+        }
+
+        private sealed class PositionalArgumentsOptions : CommandLineOptionsBase
+        {
+            public override void Validate() { }
+        }
+
+        [Fact]
+        public void PositionalArguments_Parsed()
+        {
+            var result = Parse<PositionalArgumentsOptions>("this", "that");
+            Assert.Equal(new[] { "this", "that" }, result.AdditionalArguments);
+        }
+
+        private sealed class ParsedPositionalArgumentsOptions : ICommandLineOptions
+        {
+            [PositionalArguments] public List<int> More { get; set; } = new List<int>();
+            public void Validate() { }
+        }
+
+        [Fact]
+        public void ParsedPositionalArguments_Parsed()
+        {
+            var result = Parse<ParsedPositionalArgumentsOptions>("13", "7");
+            Assert.Equal(new[] { 13, 7 }, result.More);
         }
 
         private sealed class BuiltinConverter : CommandLineOptionsBase
@@ -269,20 +294,20 @@ namespace Nito.OptionParsing.UnitTests
             Assert.Throws<OptionArgumentException>(() => Parse<BuiltinEnumConverter>("--animal", "bob"));
         }
 
+        private sealed class MyInt { public int Value { get; set; } }
+
+        private sealed class MyIntConverter : IOptionArgumentValueConverter
+        {
+            public bool CanConvert(Type type) => type == typeof(MyInt);
+            public object TryConvert(Type type, string text)
+            {
+                Assert.Equal(typeof(MyInt), type);
+                return !int.TryParse(text, out var value) ? null : new MyInt { Value = value };
+            }
+        }
+
         private sealed class ExplicitCustomConverter : CommandLineOptionsBase
         {
-            public sealed class MyInt { public int Value { get; set; } }
-
-            private sealed class MyIntConverter : IOptionArgumentValueConverter
-            {
-                public bool CanConvert(Type type) => type == typeof(MyInt);
-                public object TryConvert(Type type, string text)
-                {
-                    Assert.Equal(typeof(MyInt), type);
-                    return !int.TryParse(text, out var value) ? null : new MyInt { Value = value };
-                }
-            }
-
             [Option("level", Converter = typeof(MyIntConverter))] public MyInt Level { get; set; }
         }
 
@@ -297,6 +322,21 @@ namespace Nito.OptionParsing.UnitTests
         public void ExplicitCustomConverter_FailsToParse_Throws()
         {
             Assert.Throws<OptionArgumentException>(() => Parse<ExplicitCustomConverter>("--level:bob"));
+        }
+
+        private sealed class ImplicitCustomConverter : CommandLineOptionsBase
+        {
+            [Option("level")] public MyInt Level { get; set; }
+        }
+
+        [Fact]
+        public void ImplicitCustomConverter_IsUsed()
+        {
+            var result = Parse<ImplicitCustomConverter>(new CommandLineOptionsSettings
+            {
+                OptionArgumentValueConverters = new List<IOptionArgumentValueConverter> { new MyIntConverter() }
+            },"--level:5");
+            Assert.Equal(5, result.Level.Value);
         }
 
         private interface IInterfaceOption
@@ -345,9 +385,6 @@ namespace Nito.OptionParsing.UnitTests
             Assert.Throws<UnknownOptionException>(() => Parse<OptionBehindAndOnExplicitInterface>("-l=7"));
         }
 
-        // Positional arguments (+holes)
-        // PositionalArguments
-        // Custom parser in config
         // Use case example: command structure, with shared common options base type
         // Use case example: multiple option sets for different inputs
         // Use case example: regular options mixed in with positional arguments
