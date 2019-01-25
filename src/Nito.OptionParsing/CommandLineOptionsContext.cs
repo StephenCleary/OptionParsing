@@ -240,9 +240,9 @@ namespace Nito.OptionParsing
         private void ApplyAttributes(ICommandLineOptions commandLineOptions)
         {
             var commandLineOptionsType = commandLineOptions.GetType();
-            foreach (var property in commandLineOptionsType.GetProperties())
+            foreach (var property in commandLineOptionsType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
             {
-                foreach (var attribute in property.GetCustomAttributes(true))
+                foreach (var attribute in property.GetCustomAttributes(true)) // TODO: 'inherit' is ignored for Properties!
                 {
                     // Handle [Option] attributes.
                     if (attribute is OptionAttribute optionAttribute)

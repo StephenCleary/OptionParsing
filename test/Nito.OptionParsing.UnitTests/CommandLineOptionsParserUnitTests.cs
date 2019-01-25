@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection.PortableExecutable;
 using System.Text;
+using Nito.OptionParsing.Converters;
 using Xunit;
 using static Nito.OptionParsing.UnitTests.Utility.OptionParsing;
 // ReSharper disable ClassNeverInstantiated.Local
@@ -48,7 +49,7 @@ namespace Nito.OptionParsing.UnitTests
             Assert.Null(result.SimpleOption);
         }
 
-        private sealed class RequiredStringOptionDefaultValue: CommandLineOptionsBase
+        private sealed class RequiredStringOptionDefaultValue : CommandLineOptionsBase
         {
             [Option("and", 'a')] public string SimpleOption { get; set; } = "default";
         }
@@ -132,6 +133,8 @@ namespace Nito.OptionParsing.UnitTests
             var result = Parse<OptionPresentShortName>("--and");
             Assert.True(result.SimpleOptionPresent);
         }
+
+
 
         private sealed class BuiltinConverter : CommandLineOptionsBase
         {
@@ -228,5 +231,94 @@ namespace Nito.OptionParsing.UnitTests
         {
             Assert.Throws<OptionArgumentException>(() => Parse<BuiltinEnumConverter>("--animal", "bob"));
         }
+
+        private sealed class ExplicitCustomConverter : CommandLineOptionsBase
+        {
+            public sealed class MyInt { public int Value { get; set; } }
+
+            private sealed class MyIntConverter : IOptionArgumentValueConverter
+            {
+                public bool CanConvert(Type type) => type == typeof(MyInt);
+                public object TryConvert(Type type, string text)
+                {
+                    Assert.Equal(typeof(MyInt), type);
+                    return !int.TryParse(text, out var value) ? null : new MyInt { Value = value };
+                }
+            }
+
+            [Option("level", Converter = typeof(MyIntConverter))] public MyInt Level { get; set; }
+        }
+
+        [Fact]
+        public void ExplicitCustomConverter_IsUsed()
+        {
+            var result = Parse<ExplicitCustomConverter>("--level:13");
+            Assert.Equal(13, result.Level.Value);
+        }
+
+        [Fact]
+        public void ExplicitCustomConverter_FailsToParse_Throws()
+        {
+            Assert.Throws<OptionArgumentException>(() => Parse<ExplicitCustomConverter>("--level:bob"));
+        }
+
+        private interface IInterfaceOption
+        {
+            [Option("level", 'l')] int Level { get; set; }
+        }
+
+        private sealed class OptionBehindExplicitInterface : CommandLineOptionsBase, IInterfaceOption
+        {
+            int IInterfaceOption.Level { get; set; }
+        }
+
+        [Fact]
+        public void OptionBehindExplicitInterface_IsUsed()
+        {
+            var result = Parse<OptionBehindExplicitInterface>("-l=7");
+            Assert.Equal(7, ((IInterfaceOption) result).Level);
+        }
+
+        private interface IInterfaceOptionValue
+        {
+            int Level { get; set; }
+        }
+        
+        private sealed class OptionOnExplicitInterface : CommandLineOptionsBase, IInterfaceOptionValue
+        {
+            [Option("level", 'l')] int IInterfaceOptionValue.Level { get; set; }
+        }
+
+        [Fact]
+        public void OptionOnExplicitInterface_IsUsed()
+        {
+            var result = Parse<OptionOnExplicitInterface>("-l=7");
+            Assert.Equal(7, ((IInterfaceOptionValue)result).Level);
+        }
+
+        private sealed class OptionBehindAndOnExplicitInterface : CommandLineOptionsBase, IInterfaceOption
+        {
+            [Option("another", 'a')] int IInterfaceOption.Level { get; set; }
+        }
+
+        [Fact]
+        public void OptionBehindAndOnExplicitInterface_UsesOnlyMoreSpecificOptionDefinition()
+        {
+            var result = Parse<OptionBehindAndOnExplicitInterface>("-a=7");
+            Assert.Equal(7, ((IInterfaceOption) result).Level);
+            Assert.Throws<UnknownOptionException>(() => Parse<OptionBehindAndOnExplicitInterface>("-l=7"));
+        }
+
+        // Multiple Option parameters, Option with OptionPresent, Option with PositionalArgument, etc.
+        // Options without arguments (+non-bool property)
+        // Positional arguments (+holes)
+        // PositionalArguments
+        // Use case example: command structure, with shared common options base type
+        // Use case example: multiple option sets for different inputs
+        // Use case example: regular options mixed in with positional arguments
+        // - Can we do this by default?
+        //   - Perhaps by splitting up "Done" signal from "Validate" request?
+        //     - And for those not using Base, how easy is it to implement this "Done" signal?
+        // base.AdditionalArguments should be hidden behind an interface so the end-user consuming is clean.
     }
 }

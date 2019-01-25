@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Nito.OptionParsing.Converters;
 using Xunit;
 using static Nito.OptionParsing.UnitTests.Utility.OptionParsing;
 // ReSharper disable ClassNeverInstantiated.Local
@@ -11,6 +12,35 @@ namespace Nito.OptionParsing.UnitTests
 {
     public class CommandLineOptionsParserInvalidUnitTests
     {
+        private sealed class OptionsSameLongName : CommandLineOptionsBase
+        {
+            [Option("first", 'f')] public string First { get; set; }
+            [Option("first", 's')] public string Second { get; set; }
+        }
+
+        [Fact]
+        public void Options_SameLongName_throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<OptionsSameLongName>());
+
+        private sealed class OptionsSameShortName : CommandLineOptionsBase
+        {
+            [Option("first", 'f')] public string First { get; set; }
+            [Option("second", 'f')] public string Second { get; set; }
+        }
+
+        [Fact]
+        public void Options_SameShortName_throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<OptionsSameShortName>());
+
+        private sealed class OptionsWithoutPositionalArguments : ICommandLineOptions
+        {
+            public void Validate() { }
+        }
+
+        [Fact]
+        public void Options_WithoutPositionalArguments_Throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<OptionsWithoutPositionalArguments>());
+
         private sealed class OptionPresentNoMatch : CommandLineOptionsBase
         {
             [Option("and", 'a', OptionArgument.Optional)] public string SimpleOption { get; set; }
@@ -18,7 +48,8 @@ namespace Nito.OptionParsing.UnitTests
         }
 
         [Fact]
-        public void OptionPresent_NoMatch_Throws() => Assert.Throws<InvalidOperationException>(() => Parse<OptionPresentNoMatch>());
+        public void OptionPresent_NoMatch_Throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<OptionPresentNoMatch>());
 
         private sealed class OptionPresentNonBoolean : CommandLineOptionsBase
         {
@@ -27,16 +58,60 @@ namespace Nito.OptionParsing.UnitTests
         }
 
         [Fact]
-        public void OptionPresent_NonBoolean_Throws() => Assert.Throws<InvalidOperationException>(() => Parse<OptionPresentNonBoolean>());
+        public void OptionPresent_NonBoolean_Throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<OptionPresentNonBoolean>());
 
         private sealed class CustomTypeWithoutConverter : CommandLineOptionsBase
         {
-            [Option("level", 'l')] public CustomType SimpleOption { get; set; }
-            public sealed class CustomType { }
+            public sealed class MyInt { public int Value { get; set; } }
+            [Option("level", 'l')] public MyInt SimpleOption { get; set; }
         }
 
         [Fact]
         public void CustomType_WithoutConverter_Throws() =>
             Assert.Throws<InvalidOperationException>(() => Parse<CustomTypeWithoutConverter>());
+
+        private sealed class ExplicitCustomConverterWithoutInterface : CommandLineOptionsBase
+        {
+            public sealed class MyInt { public int Value { get; set; } }
+
+            private sealed class MyIntConverter // : IOptionArgumentValueConverter
+            {
+                public bool CanConvert(Type type)
+                {
+                     Assert.True(false);
+                     return false;
+                }
+
+                public object TryConvert(Type type, string text)
+                {
+                    Assert.True(false);
+                    return null;
+                }
+            }
+
+            [Option("level", Converter = typeof(MyIntConverter))] public MyInt Level { get; set; }
+        }
+
+        [Fact]
+        public void ExplicitCustomConverter_WithoutInterface_Throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<ExplicitCustomConverterWithoutInterface>());
+
+        private sealed class ExplicitCustomConverterReturnsFalseFromCanConvert : CommandLineOptionsBase
+        {
+            public sealed class MyInt { public int Value { get; set; } }
+
+            private sealed class MyIntConverter : IOptionArgumentValueConverter
+            {
+                public bool CanConvert(Type type) => false;
+                public object TryConvert(Type type, string text) => new MyInt { Value = 7 };
+            }
+
+            [Option("level", Converter = typeof(MyIntConverter))] public MyInt Level { get; set; }
+        }
+
+        [Fact]
+        public void ExplicitCustomConverter_ReturnsFalseFromCanConvert_Throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<ExplicitCustomConverterReturnsFalseFromCanConvert>());
     }
 }
