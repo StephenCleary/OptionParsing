@@ -320,6 +320,7 @@ namespace Nito.OptionParsing
             ValidateAttributes();
             var parser = new OptionParser(StringComparer, OptionActions.Keys, commandLine, SlashOptionsEnabled);
             ApplyCommandLineOptions(parser);
+            commandLineOptions.Done();
             commandLineOptions.Validate();
         }
     }

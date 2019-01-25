@@ -189,6 +189,7 @@ namespace Nito.OptionParsing.UnitTests
         {
             [PositionalArguments] public List<int> More { get; set; } = new List<int>();
             public void Validate() { }
+            public void Done() { }
         }
 
         [Fact]
@@ -196,6 +197,18 @@ namespace Nito.OptionParsing.UnitTests
         {
             var result = Parse<ParsedPositionalArgumentsOptions>("13", "7");
             Assert.Equal(new[] { 13, 7 }, result.More);
+        }
+
+        private sealed class MixedPositionalAndOptions : CommandLineOptionsBase
+        {
+            [PositionalArgument(0)] public string First { get; set; }
+            [Option("level", 'l')] public string Level { get; set; }
+        }
+
+        [Fact]
+        public void Option_AfterPositionalArgument_Throws()
+        {
+            Assert.Throws<UnknownOptionException>(() => Parse<MixedPositionalAndOptions>("test", "-l:bob"));
         }
 
         private sealed class BuiltinConverter : CommandLineOptionsBase

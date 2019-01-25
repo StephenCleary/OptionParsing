@@ -35,6 +35,7 @@ namespace Nito.OptionParsing.UnitTests
         private sealed class OptionsWithoutPositionalArguments : ICommandLineOptions
         {
             public void Validate() { }
+            public void Done() { }
         }
 
         [Fact]
@@ -103,6 +104,7 @@ namespace Nito.OptionParsing.UnitTests
         {
             [PositionalArguments] public string More { get; set; }
             public void Validate() { }
+            public void Done() { }
         }
 
         [Fact]
@@ -118,6 +120,7 @@ namespace Nito.OptionParsing.UnitTests
             }
             [PositionalArguments] public MyList More { get; set; } = new MyList();
             public void Validate() { }
+            public void Done() { }
         }
 
         [Fact]

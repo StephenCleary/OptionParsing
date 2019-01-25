@@ -22,5 +22,10 @@ namespace Nito.OptionParsing
             if (AdditionalArguments.Count != 0)
                 throw new UnknownOptionException($"Unknown parameter {AdditionalArguments[0]}");
         }
+
+        /// <inheritdoc />
+        public virtual void Done()
+        {
+        }
     }
 }

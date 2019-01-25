@@ -20,4 +20,8 @@
     <ProjectReference Include="..\..\src\Nito.OptionParsing\Nito.OptionParsing.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UseCases\" />
+  </ItemGroup>
+
 </Project>
