@@ -134,7 +134,44 @@ namespace Nito.OptionParsing.UnitTests
             Assert.True(result.SimpleOptionPresent);
         }
 
+        private sealed class OptionWithoutArgument : CommandLineOptionsBase
+        {
+            [Option("and", 'a', OptionArgument.None)] public bool FlagOption { get; set; }
+        }
 
+        [Fact]
+        public void OptionWithoutArgument_OptionNotPassed_IsFalse()
+        {
+            var result = Parse<OptionWithoutArgument>();
+            Assert.False(result.FlagOption);
+        }
+
+        [Fact]
+        public void OptionWithoutArgument_OptionPassed_IsTrue()
+        {
+            var result = Parse<OptionWithoutArgument>("-a");
+            Assert.True(result.FlagOption);
+        }
+
+        private sealed class PositionalArgument : CommandLineOptionsBase
+        {
+            [PositionalArgument(1)] public int Second { get; set; }
+            [PositionalArgument(0)] public string First { get; set; }
+        }
+
+        [Fact]
+        public void PositionalArguments_AreUsed()
+        {
+            var result = Parse<PositionalArgument>("a", "13");
+            Assert.Equal("a", result.First);
+            Assert.Equal(13, result.Second);
+        }
+
+        [Fact]
+        public void PositionalArgument_UnparseableValue_Throws()
+        {
+            Assert.Throws<OptionArgumentException>(() => Parse<PositionalArgument>("x", "y"));
+        }
 
         private sealed class BuiltinConverter : CommandLineOptionsBase
         {
@@ -273,10 +310,9 @@ namespace Nito.OptionParsing.UnitTests
         }
 
         [Fact]
-        public void OptionBehindExplicitInterface_IsUsed()
+        public void OptionBehindExplicitInterface_IsNotUsed()
         {
-            var result = Parse<OptionBehindExplicitInterface>("-l=7");
-            Assert.Equal(7, ((IInterfaceOption) result).Level);
+            Assert.Throws<UnknownOptionException>(() => Parse<OptionBehindExplicitInterface>("-l=7"));
         }
 
         private interface IInterfaceOptionValue
@@ -309,10 +345,9 @@ namespace Nito.OptionParsing.UnitTests
             Assert.Throws<UnknownOptionException>(() => Parse<OptionBehindAndOnExplicitInterface>("-l=7"));
         }
 
-        // Multiple Option parameters, Option with OptionPresent, Option with PositionalArgument, etc.
-        // Options without arguments (+non-bool property)
         // Positional arguments (+holes)
         // PositionalArguments
+        // Custom parser in config
         // Use case example: command structure, with shared common options base type
         // Use case example: multiple option sets for different inputs
         // Use case example: regular options mixed in with positional arguments

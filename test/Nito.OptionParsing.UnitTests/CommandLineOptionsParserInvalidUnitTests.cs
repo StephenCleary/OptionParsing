@@ -61,6 +61,35 @@ namespace Nito.OptionParsing.UnitTests
         public void OptionPresent_NonBoolean_Throws() =>
             Assert.Throws<InvalidOperationException>(() => Parse<OptionPresentNonBoolean>());
 
+        private sealed class OptionWithoutArgumentNonBoolean : CommandLineOptionsBase
+        {
+            [Option("and", 'a', OptionArgument.None)] public string FlagOption { get; set; }
+        }
+
+        [Fact]
+        public void OptionWithoutArgument_NonBoolean_Throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<OptionWithoutArgumentNonBoolean>());
+
+        private sealed class DuplicatePositionalArgument : CommandLineOptionsBase
+        {
+            [PositionalArgument(0)] public string First { get; set; }
+            [PositionalArgument(0)] public string Second { get; set; }
+        }
+
+        [Fact]
+        public void DuplicatePositionalArgument_Throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<DuplicatePositionalArgument>());
+
+        private sealed class PositionalArgumentGap : CommandLineOptionsBase
+        {
+            [PositionalArgument(0)] public string First { get; set; }
+            [PositionalArgument(2)] public string Third { get; set; }
+        }
+
+        [Fact]
+        public void NoPositionalArgumentsAttribute_Throws() =>
+            Assert.Throws<InvalidOperationException>(() => Parse<PositionalArgumentGap>());
+
         private sealed class CustomTypeWithoutConverter : CommandLineOptionsBase
         {
             public sealed class MyInt { public int Value { get; set; } }
