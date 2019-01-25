@@ -26,13 +26,13 @@ namespace Nito.OptionParsing
         /// <inheritdoc />
         public virtual void Done(CommandLineOptionsSettings settings)
         {
-            if (AdditionalArguments.Count != _additionalArgumentsCount)
-            {
-                var additionalArguments = AdditionalArguments;
-                _additionalArgumentsCount = AdditionalArguments.Count;
-                AdditionalArguments = new List<string>();
-                this.Apply(additionalArguments, settings);
-            }
+            if (AdditionalArguments.Count == _additionalArgumentsCount)
+                return;
+
+            var additionalArguments = AdditionalArguments;
+            _additionalArgumentsCount = AdditionalArguments.Count;
+            AdditionalArguments = new List<string>();
+            this.Apply(additionalArguments, settings);
         }
 
         private int _additionalArgumentsCount;
