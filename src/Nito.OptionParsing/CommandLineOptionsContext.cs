@@ -147,6 +147,20 @@ namespace Nito.OptionParsing
                    throw new InvalidOperationException($"Option argument value converter {type.Name} does not implement {nameof(IOptionArgumentValueConverter)}."));
         }
 
+        /// <summary>
+        /// Parses a parameter into an object. Throws <see cref="OptionArgumentException"/> if the conversion fails.
+        /// </summary>
+        /// <param name="parser">The parser used to convert the object. May not be <c>null</c>.</param>
+        /// <param name="parameter">The parameter to convert. May not be <c>null</c>.</param>
+        /// <param name="type">The type being converted to.</param>
+        private static object Convert(Func<string, object> parser, string parameter, Type type)
+        {
+            var value = parser(parameter);
+            if (value == null)
+                throw new OptionArgumentException($"Could not parse {parameter} as {type.FriendlyTypeName()}.");
+            return value;
+        }
+
         private void ApplyAttribute(ICommandLineOptions commandLineOptions, PropertyInfo property, OptionAttribute optionAttribute)
         {
             var optionDefinition = new OptionDefinition { LongName = optionAttribute.LongName, ShortName = optionAttribute.ShortName, Argument = optionAttribute.Argument };
@@ -167,9 +181,7 @@ namespace Nito.OptionParsing
                 {
                     if (parameter == null)
                         return;
-                    var value = parser(parameter);
-                    if (value == null)
-                        throw new OptionArgumentException($"Could not parse {parameter} as {property.PropertyType.FriendlyTypeName()}.");
+                    var value = Convert(parser, parameter, property.PropertyType);
                     property.SetOptionProperty(commandLineOptions, value);
                 });
             }
@@ -187,9 +199,7 @@ namespace Nito.OptionParsing
             var parser = GetParser(property.PropertyType, CreateConverter(positionalArgumentAttribute.Converter));
             IndexedPositionalArgumentActions[positionalArgumentAttribute.Index] = parameter =>
             {
-                var value = parser(parameter);
-                if (value == null)
-                    throw new OptionArgumentException($"Could not parse {parameter} as {property.PropertyType.FriendlyTypeName()}.");
+                var value = Convert(parser, parameter, property.PropertyType);
                 property.SetOptionProperty(commandLineOptions, value);
             };
         }
@@ -213,9 +223,7 @@ namespace Nito.OptionParsing
             var parser = GetParser(propertyType, CreateConverter(positionalArgumentsAttribute.Converter));
             AdditionalPositionalArgumentAction = parameter =>
             {
-                var value = parser(parameter);
-                if (value == null)
-                    throw new OptionArgumentException($"Could not parse {parameter} as {propertyType.FriendlyTypeName()}.");
+                var value = Convert(parser, parameter, propertyType);
                 addMethod.Invoke(property.GetValue(commandLineOptions, null), new[] { value });
             };
         }
