@@ -176,13 +176,14 @@ namespace Nito.OptionParsing.UnitTests
         private sealed class PositionalArgumentsOptions : CommandLineOptionsBase
         {
             public override void Validate() { }
+            public List<string> GetPositionalArguments() => AdditionalArguments;
         }
 
         [Fact]
         public void PositionalArguments_Parsed()
         {
             var result = Parse<PositionalArgumentsOptions>("this", "that");
-            Assert.Equal(new[] { "this", "that" }, result.AdditionalArguments);
+            Assert.Equal(new[] { "this", "that" }, result.GetPositionalArguments());
         }
 
         private sealed class ParsedPositionalArgumentsOptions : ICommandLineOptions
@@ -402,10 +403,5 @@ namespace Nito.OptionParsing.UnitTests
 
         // Use case example: command structure, with shared common options base type
         // Use case example: multiple option sets for different inputs
-        // Use case example: regular options mixed in with positional arguments
-        // - Can we do this by default?
-        //   - Perhaps by splitting up "Done" signal from "Validate" request?
-        //     - And for those not using Base, how easy is it to implement this "Done" signal?
-        // base.AdditionalArguments should be hidden behind an interface so the end-user consuming is clean.
     }
 }

@@ -11,7 +11,7 @@ namespace Nito.OptionParsing
         /// The list of additional positional arguments after those specified by <see cref="PositionalArgumentAttribute"/>.
         /// </summary>
         [PositionalArguments]
-        public List<string> AdditionalArguments { get; private set; } = new List<string>();
+        protected List<string> AdditionalArguments { get; private set; } = new List<string>();
 
         /// <inheritdoc />
         /// <summary>
