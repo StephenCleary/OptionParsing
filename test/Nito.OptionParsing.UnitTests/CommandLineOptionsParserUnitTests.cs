@@ -416,8 +416,5 @@ namespace Nito.OptionParsing.UnitTests
             Assert.Equal(7, ((IInterfaceOption) result).Level);
             Assert.Throws<UnknownOptionException>(() => Parse<OptionBehindAndOnExplicitInterface>("-l=7"));
         }
-
-        // Use case example: command structure, with shared common options base type
-        // Use case example: multiple option sets for different inputs
     }
 }

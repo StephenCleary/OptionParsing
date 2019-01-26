@@ -6,7 +6,7 @@ namespace Nito.OptionParsing
     /// <summary>
     /// Specifies that a command-line option sets this property.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public sealed class OptionAttribute: Attribute
     {
         /// <param name="longName">The long name of the option. The long name may not contain ':' or '=' characters.</param>
