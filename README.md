@@ -3,7 +3,7 @@ A flexible command-line parsing library
 
 ## Quick Start
 
-Define an `Option` class like this:
+Define an `Options` class like this:
 
 ```C#
 private sealed class Options : CommandLineOptionsBase
@@ -23,7 +23,7 @@ try
 {
   var options = CommandLineOptionsParser.Parse<Options>();
 }
-catch (OptionParsingException ex) // OptionParsingException => user error
+catch (OptionParsingException ex) // OptionParsingException indicates user error
 {
   Console.Error.WriteLine(ex.Message);
   Console.Error.WriteLine("Usage: MyApp.exe [OPTIONS]...");
