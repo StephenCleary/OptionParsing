@@ -13,14 +13,14 @@ namespace Nito.OptionParsing.UnitTests.UseCases
             [PositionalArgument(0)]
             public string Filename { get; set; }
 
-            [Option("flag", 'f', Argument = OptionArgument.None)]
+            [Option("flag", 'f', OptionArgument.None)]
             public bool Flag { get; set; }
 
             [Option("label", 'l')]
             public string Label { get; set; }
 
             // Allow --help, -h, -? to all set this Help property.
-            [Option("help", 'h', Argument = OptionArgument.None), Option('?', Argument = OptionArgument.None)]
+            [Option("help", 'h', OptionArgument.None), Option('?', OptionArgument.None)]
             public bool Help { get; set; }
         }
 
