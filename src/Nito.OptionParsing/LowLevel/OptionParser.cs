@@ -6,6 +6,9 @@ using Nito.OptionParsing.Lexing;
 
 namespace Nito.OptionParsing.LowLevel
 {
+    /// <summary>
+    /// A type that parses command line options based on a set of option definitions.
+    /// </summary>
     public sealed class OptionParser: IEnumerable<ParsedOption>
     {
         /// <summary>

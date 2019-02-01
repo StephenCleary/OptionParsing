@@ -11,6 +11,9 @@ namespace Nito.OptionParsing.Lexing
     /// </summary>
     public sealed class Win32CommandLineLexer: ICommandLineLexer
     {
+        /// <summary>
+        /// A singleton instance of this lexer.
+        /// </summary>
         public static Win32CommandLineLexer Instance { get; } = new Win32CommandLineLexer();
 
         private enum LexerState

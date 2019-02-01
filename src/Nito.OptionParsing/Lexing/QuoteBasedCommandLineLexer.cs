@@ -10,6 +10,9 @@ namespace Nito.OptionParsing.Lexing
     /// </summary>
     public sealed class QuoteBasedCommandLineLexer: ICommandLineLexer
     {
+        /// <summary>
+        /// A singleton instance of this lexer.
+        /// </summary>
         public static QuoteBasedCommandLineLexer Instance { get; } = new QuoteBasedCommandLineLexer();
 
         private enum LexerState

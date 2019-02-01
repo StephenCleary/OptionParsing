@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Nito.OptionParsing
 {
+    /// <summary>
+    /// Utility methods for parsing command lines into command line option instances.
+    /// </summary>
     public static class CommandLineOptionsParser
     {
         /// <summary>
