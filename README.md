@@ -1,6 +1,11 @@
 # Nito.OptionParsing
 A flexible command-line parsing library
 
+[![AppVeyor](https://img.shields.io/appveyor/ci/StephenCleary/OptionParsing.svg?style=plastic)](https://ci.appveyor.com/project/StephenCleary/OptionParsing) [![codecov](https://codecov.io/gh/StephenCleary/OptionParsing/branch/master/graph/badge.svg)](https://codecov.io/gh/StephenCleary/OptionParsing)
+[![NuGet Pre Release](https://img.shields.io/nuget/vpre/Nito.OptionParsing.svg?style=plastic)](https://www.nuget.org/packages/Nito.OptionParsing/)
+
+[API Docs](http://dotnetapis.com/pkg/Nito.OptionParsing)
+
 ## Quick Start
 
 Define an `Options` class like this:
