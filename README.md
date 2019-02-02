@@ -1,10 +1,10 @@
 # Nito.OptionParsing
 A flexible command-line parsing library
 
-[![AppVeyor](https://img.shields.io/appveyor/ci/StephenCleary/OptionParsing.svg?style=plastic)](https://ci.appveyor.com/project/StephenCleary/OptionParsing) [![codecov](https://codecov.io/gh/StephenCleary/OptionParsing/branch/master/graph/badge.svg)](https://codecov.io/gh/StephenCleary/OptionParsing)
+[![AppVeyor](https://img.shields.io/appveyor/ci/StephenCleary/OptionParsing.svg?style=plastic)](https://ci.appveyor.com/project/StephenCleary/OptionParsing) [![codecov](https://img.shields.io/codecov/c/github/StephenCleary/OptionParsing.svg?style=plastic)](https://codecov.io/gh/StephenCleary/OptionParsing)
 [![NuGet Pre Release](https://img.shields.io/nuget/vpre/Nito.OptionParsing.svg?style=plastic)](https://www.nuget.org/packages/Nito.OptionParsing/)
 
-[API Docs](http://dotnetapis.com/pkg/Nito.OptionParsing)
+[Conceptual Docs](./doc/README.md) - [API Docs](http://dotnetapis.com/pkg/Nito.OptionParsing)
 
 ## Quick Start
 
@@ -36,7 +36,7 @@ catch (OptionParsingException ex) // OptionParsingException indicates user error
 }
 ```
 
-Out of the box, the following command line arguments are all supported:
+Out of the box, the following command line argument styles are all supported:
 
 ```
 // { Label = null, Flag = false }
@@ -63,4 +63,4 @@ MyApp.exe -l:bob
 MyApp.exe -l bob
 ```
 
-[Conceptual docs](./doc/README.md)
+[More details](./doc/README.md)
